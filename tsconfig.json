@@ -23,7 +23,8 @@
 		],
 		"types": [
 			"phaser"
-		]
+		],
+		"strictPropertyInitialization": false
 	},
 	"include": [
 		"src/**/*"
