@@ -13,7 +13,6 @@ export interface keyBool{
 declare global {
   interface Window {
     recording: {
-        time: number
         keys: keyBool
     };
     time: number;

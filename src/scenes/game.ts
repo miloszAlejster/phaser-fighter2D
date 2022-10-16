@@ -1,14 +1,11 @@
 import Phaser from "phaser";
 import Player from "~/objects/player";
-import * as Types from "../types/index"
 
 export default class Game extends Phaser.Scene{
     constructor(){
         super('game');
     }
     player: Phaser.GameObjects.Text
-    keys: Types.keysTypes
-    recordedKeys: Types.keyBool
     create(){
         // player
         const layer1: string = ' o '
@@ -32,33 +29,8 @@ export default class Game extends Phaser.Scene{
         // const camera = this.cameras.main;
         // camera.setBounds(0, 0, worldWidth, worldHeigth);
         // camera.startFollow(this.player)
-        // keys
-        this.keys = {
-            left: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT),
-            right: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT),
-            jump: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP),
-            crouch: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN)
-        };
     }
     update(time: number, delta: number): void {
-        this.record(delta)
         this.player.update(time, delta)
-    }
-    // record input
-    record(delta: number){
-        let keys: Types.keyBool = {
-            left: this.keys.left.isDown,
-            right: this.keys.right.isDown,
-            jump: this.keys.jump.isDown,
-            crouch: this.keys.crouch.isDown
-        };
-        if(typeof window.recording === 'undefined')
-            window.time = 0
-        window.time += delta
-        window.recording = {
-            time: window.time,
-            keys: keys
-        };
-        this.recordedKeys = keys;
     }
 }
