@@ -18,16 +18,35 @@ export default class Player extends Phaser.GameObjects.Text{
         left: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT),
         right: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT),
         jump: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP),
-        crouch: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN)
+        crouch: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN),
+        punch: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z)
     }
     recordedKeys: Types.keyBool
     jumpCooldown: number = 0
     idle: boolean = true
     isCrouching: boolean = false
+    lastHDir: string = "r"
+    lastVDir: string = "f"
     
     update(time: number, delta: number): void{
+        this.recordKeys()
         this.handlePlayerMovement(time)
         this.handlePlayerSize()
+        this.handleAttack()
+    }
+    recordKeys(){
+        // check input
+        this.recordedKeys = {
+            left: this.keys.left.isDown,
+            right: this.keys.right.isDown,
+            jump: this.keys.jump.isDown,
+            crouch: this.keys.crouch.isDown,
+            punch: this.keys.punch.isDown
+        };
+    }
+    handleAttack(){
+        // console.log("H ", this.lastHDir, " V ", this.lastVDir)
+        
     }
     handlePlayerSize(){
         if(this.idle){
@@ -38,53 +57,31 @@ export default class Player extends Phaser.GameObjects.Text{
             this.text = SpritePlayer.crouch
             this.setDisplaySize(55, 29 * 2)
         }
-        console.log("idle ", this.idle, " crouch ", this.isCrouching)
     }
     handlePlayerMovement(time: number){
-        // console.log(this.isCrouching)
-        // if(this.keys.crouch.isUp){
-        //     this.text = SpritePlayer.idle
-        //     this.setDisplaySize(55, 29 * 3)
-        //     // this.setPosition(this.x, this.y - 50)
-        // }else if (this.keys.crouch.isDown && ("blocked" in this.body) && this.body.blocked.down){
-        //     this.text = SpritePlayer.crouch
-        //     this.setDisplaySize(55, 29 * 2)
-        //     // nie wiem ile?
-        //     // this.setPosition(this.x, this.y - 10)
-        // }
-        /*
-        
-        */
         // reset
         if('setVelocity' in this.body)
             this.body.setVelocity(0);
-        // check input
-        let recordedKeys: Types.keyBool = {
-            left: this.keys.left.isDown,
-            right: this.keys.right.isDown,
-            jump: this.keys.jump.isDown,
-            crouch: this.keys.crouch.isDown
-        };
         // handle movement sideway
-        if (recordedKeys.left === true)
+        if (this.recordedKeys.left === true)
         {
-            // console.log("l")
+            this.lastHDir = "l"
             this.body.velocity.x = -this.MovementSpeed
-        } else if (recordedKeys.right === true)
+        } else if (this.recordedKeys.right === true)
         {
-            // console.log("r")
+            this.lastHDir = "r"
             this.body.velocity.x = this.MovementSpeed
         }
         // handle jump and crouch
-        if (recordedKeys.crouch === true)
+        if (this.recordedKeys.crouch === true)
         {
-            // console.log("d")
+            this.lastVDir = "d"
             this.idle = false;
             this.isCrouching = true
-        } else if (recordedKeys.jump === true 
+        } else if (this.recordedKeys.jump === true 
             && ('touching' in this.body) && this.body.blocked.down)
         {
-            // console.log("u")
+            this.lastVDir = "u"
             this.jumpCooldown = 12
         }else{
             this.idle = true;
