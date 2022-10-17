@@ -22,15 +22,39 @@ export default class Player extends Phaser.GameObjects.Text{
     }
     recordedKeys: Types.keyBool
     jumpCooldown: number = 0
-    idle: boolean = false
+    idle: boolean = true
+    isCrouching: boolean = false
     
     update(time: number, delta: number): void{
         this.handlePlayerMovement(time)
+        this.handlePlayerSize()
     }
-    handlePlayerMovement(time: number){
+    handlePlayerSize(){
         if(this.idle){
             this.text = SpritePlayer.idle
+            this.setDisplaySize(55, 29 * 3)
+        }else if(this.isCrouching){
+            // help in init to spawn player directly on platform
+            this.text = SpritePlayer.crouch
+            this.setDisplaySize(55, 29 * 2)
         }
+        console.log("idle ", this.idle, " crouch ", this.isCrouching)
+    }
+    handlePlayerMovement(time: number){
+        // console.log(this.isCrouching)
+        // if(this.keys.crouch.isUp){
+        //     this.text = SpritePlayer.idle
+        //     this.setDisplaySize(55, 29 * 3)
+        //     // this.setPosition(this.x, this.y - 50)
+        // }else if (this.keys.crouch.isDown && ("blocked" in this.body) && this.body.blocked.down){
+        //     this.text = SpritePlayer.crouch
+        //     this.setDisplaySize(55, 29 * 2)
+        //     // nie wiem ile?
+        //     // this.setPosition(this.x, this.y - 10)
+        // }
+        /*
+        
+        */
         // reset
         if('setVelocity' in this.body)
             this.body.setVelocity(0);
@@ -50,22 +74,21 @@ export default class Player extends Phaser.GameObjects.Text{
         {
             // console.log("r")
             this.body.velocity.x = this.MovementSpeed
-        } else {
-            this.idle = true
         }
         // handle jump and crouch
-        if (recordedKeys.crouch === true 
-            && ('touching' in this.body) && this.body.blocked.down)
+        if (recordedKeys.crouch === true)
         {
             // console.log("d")
-            this.text = SpritePlayer.crouch
+            this.idle = false;
+            this.isCrouching = true
         } else if (recordedKeys.jump === true 
             && ('touching' in this.body) && this.body.blocked.down)
         {
             // console.log("u")
             this.jumpCooldown = 12
-        } else {
-            this.idle = true
+        }else{
+            this.idle = true;
+            this.isCrouching = false;
         }
         // handle jump in time
         if(this.jumpCooldown > 0){
