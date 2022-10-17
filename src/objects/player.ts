@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 import * as Types from "../types/index"
 import * as SpritePlayer from "../consts/spritesPlayer"
+import Punch from "./punch"
 
 export default class Player extends Phaser.GameObjects.Text{
     constructor(config){
@@ -27,6 +28,8 @@ export default class Player extends Phaser.GameObjects.Text{
     isCrouching: boolean = false
     lastHDir: string = "r"
     lastVDir: string = "f"
+    punch: Punch
+    firstCrouch: boolean = true
     
     update(time: number, delta: number): void{
         this.recordKeys()
@@ -46,16 +49,51 @@ export default class Player extends Phaser.GameObjects.Text{
     }
     handleAttack(){
         // console.log("H ", this.lastHDir, " V ", this.lastVDir)
-        
+        let x: number, y: number = this.y;
+        /*
+        check in case lastDir and pass x and y into new object punch
+        */
+       if(this.keys.punch.isDown){
+            switch(this.lastVDir){
+                case "l":
+                    x = this.x-30
+                    this.createPunch(x, y)
+                    break
+                case "r":
+                    x = this.x+30
+                    this.createPunch(x, y)
+                    break
+                default:
+                    console.log("error in dir of punch attack")
+                    break
+            }
+        }
+    }
+    createPunch(x: number, y: number){
+        this.punch = new Punch({
+            scene: this.scene,
+            x: this.x,
+            y: this.y,
+            text: 'o',
+            style: {
+                fontSize: 20
+            }
+        }).setOrigin(0)
     }
     handlePlayerSize(){
         if(this.idle){
             this.text = SpritePlayer.idle
             this.setDisplaySize(55, 29 * 3)
+            // reset
+            this.firstCrouch = true
         }else if(this.isCrouching){
-            // help in init to spawn player directly on platform
             this.text = SpritePlayer.crouch
             this.setDisplaySize(55, 29 * 2)
+            // reset
+            if(this.firstCrouch){
+                this.firstCrouch = false
+                this.setPosition(this.x, this.scene.scale.height-10)
+            }
         }
     }
     handlePlayerMovement(time: number){

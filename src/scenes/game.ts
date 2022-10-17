@@ -16,7 +16,7 @@ export default class Game extends Phaser.Scene{
             style: {
                 fontSize: 30
             }
-        })
+        }).setOrigin(0)
         const worldWidth = this.scale.width * 1.2
         const worldHeigth = this.scale.height - 10
         this.physics.world.setBounds(0, 0, worldWidth, worldHeigth)
