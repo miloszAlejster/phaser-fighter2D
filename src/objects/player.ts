@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import * as Types from "../types/index"
+import * as SpritePlayer from "../consts/spritesPlayer"
 
 export default class Player extends Phaser.GameObjects.Text{
     constructor(config){
@@ -21,10 +22,15 @@ export default class Player extends Phaser.GameObjects.Text{
     }
     recordedKeys: Types.keyBool
     jumpCooldown: number = 0
+    idle: boolean = false
+    
     update(time: number, delta: number): void{
         this.handlePlayerMovement(time)
     }
     handlePlayerMovement(time: number){
+        if(this.idle){
+            this.text = SpritePlayer.idle
+        }
         // reset
         if('setVelocity' in this.body)
             this.body.setVelocity(0);
@@ -35,25 +41,36 @@ export default class Player extends Phaser.GameObjects.Text{
             jump: this.keys.jump.isDown,
             crouch: this.keys.crouch.isDown
         };
-        // handle movement
+        // handle movement sideway
         if (recordedKeys.left === true)
         {
-            console.log("l")
+            // console.log("l")
             this.body.velocity.x = -this.MovementSpeed
         } else if (recordedKeys.right === true)
         {
-            console.log("r")
+            // console.log("r")
             this.body.velocity.x = this.MovementSpeed
-        } 
-        else  if (recordedKeys.jump === true && time - this.jumpCooldown >= 500)
-        {
-            this.jumpCooldown = time
-            console.log("up")
-            this.body.velocity.y = -3000
-        } else if (recordedKeys.crouch === true)
-        {
-            console.log("down")
+        } else {
+            this.idle = true
         }
-        //console.log('touching' in this.body && this.body.touching.down)
+        // handle jump and crouch
+        if (recordedKeys.crouch === true 
+            && ('touching' in this.body) && this.body.blocked.down)
+        {
+            // console.log("d")
+            this.text = SpritePlayer.crouch
+        } else if (recordedKeys.jump === true 
+            && ('touching' in this.body) && this.body.blocked.down)
+        {
+            // console.log("u")
+            this.jumpCooldown = 12
+        } else {
+            this.idle = true
+        }
+        // handle jump in time
+        if(this.jumpCooldown > 0){
+            this.jumpCooldown -= 1
+            this.body.velocity.y = -400
+        }
     }
 }

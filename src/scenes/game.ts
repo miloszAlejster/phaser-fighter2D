@@ -8,16 +8,11 @@ export default class Game extends Phaser.Scene{
     player: Phaser.GameObjects.Text
     create(){
         // player
-        const layer1: string = ' o '
-        const layer2: string = '/|\\'
-        const layer3: string = '/ \\'
-        const playerSprite: string = 
-            `${layer1}\n${layer2}\n${layer3}`
         this.player = new Player({
             scene: this,
             x: this.scale.width/2 - 10,
             y: this.scale.height/2,
-            text: playerSprite,
+            text: '   \n\n',
             style: {
                 fontSize: 30
             }
