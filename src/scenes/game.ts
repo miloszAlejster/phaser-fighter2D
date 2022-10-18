@@ -10,8 +10,8 @@ export default class Game extends Phaser.Scene{
         // player
         this.player = new Player({
             scene: this,
-            x: this.scale.width/2 - 10,
-            y: this.scale.height/2,
+            x: 100,
+            y: this.scale.height - 53.5,
             text: '   \n\n',
             style: {
                 fontSize: 30

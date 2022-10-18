@@ -13,6 +13,11 @@ export default class Player extends Phaser.GameObjects.Text{
         if('setCollideWorldBounds' in this.body){
             this.body.setCollideWorldBounds(true)
         }
+        if("offset" in this.body)
+            this.body.offset.x = 12
+        // it say that width is readonly but nor really?
+        //@ts-ignore
+        this.body.width = this.width - 24
     }
     MovementSpeed: number = 150
     keys: Types.keysTypes = {
@@ -40,6 +45,7 @@ export default class Player extends Phaser.GameObjects.Text{
         this.handlePlayerSize()
         this.handleAttack()
         this.handlePunchAttack(time, delta)
+        console.log("pX ",this.x," pY ",this.y)
     }
     handleAttack(){}
     recordKeys(){
@@ -54,17 +60,17 @@ export default class Player extends Phaser.GameObjects.Text{
     }
     handlePunchAttack(time: number, delta: number){
         const cooldown = time - this.lastTimePunch < this.punchCooldown
-        // init slash attack
+        // init punch attack
         if((!this.punch || !this.punch.scene) && this.recordedKeys.punch && !cooldown){
             this.createPunch()
             this.isDonePunch = false
             this.lastTimePunch = time
         }
-        // update slash attack
+        // update punch attack
         if(this.isDonePunch === false){
             this.punch.update(time, delta);
         } 
-        // destroy slash attack
+        // destroy punch attack
         // TODO: change name of variables to fit it
         if(this.isDonePunch === false && !cooldown){
             this.punch.destroy()
@@ -87,14 +93,18 @@ export default class Player extends Phaser.GameObjects.Text{
     handlePlayerSize(){
         if(this.idle){
             this.text = SpritePlayer.idle
-            if("setSize" in this.body)
-                this.body.setSize(40,70, true)
+            if("offset" in this.body)
+                this.body.offset.y = 10
+            //@ts-ignore
+            this.body.height = this.height - 12
             // reset
             this.firstCrouch = true
         }else if(this.isCrouching){
             this.text = SpritePlayer.crouch
-            if("setSize" in this.body)
-                this.body.setSize(40, 50, true)
+            if("offset" in this.body)
+                this.body.offset.y = 29
+            //@ts-ignore
+            this.body.height = this.height-31
             // reset
             if(this.firstCrouch){
                 this.firstCrouch = false
