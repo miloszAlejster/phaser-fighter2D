@@ -15,7 +15,11 @@ export default class Player extends Phaser.GameObjects.Text{
         }
         if("offset" in this.body)
             this.body.offset.x = 12
+        if("offset" in this.body)
+            this.body.offset.y = 10
         // it say that width is readonly but nor really?
+        //@ts-ignore
+        this.body.height = this.height - 12
         //@ts-ignore
         this.body.width = this.width - 24
     }
@@ -36,18 +40,17 @@ export default class Player extends Phaser.GameObjects.Text{
     punch: Punch
     firstCrouch: boolean = true
     lastTimePunch: number = 0
-    punchCooldown: number = 400// ms
-    isDonePunch: boolean|undefined = undefined
+    punchCooldown: number = 500// ms
+    isPunch: boolean|undefined = undefined
     
     update(time: number, delta: number): void{
         this.recordKeys()
         this.handlePlayerMovement(time)
         this.handlePlayerSize()
-        this.handleAttack()
+        // this.handleAttack()
         this.handlePunchAttack(time, delta)
-        console.log("pX ",this.x," pY ",this.y)
     }
-    handleAttack(){}
+    // handleAttack(){}
     recordKeys(){
         // check input
         this.recordedKeys = {
@@ -59,36 +62,40 @@ export default class Player extends Phaser.GameObjects.Text{
         };
     }
     handlePunchAttack(time: number, delta: number){
-        const cooldown = time - this.lastTimePunch < this.punchCooldown
         // init punch attack
-        if((!this.punch || !this.punch.scene) && this.recordedKeys.punch && !cooldown){
+        // console.log("1 ",(!this.punch || !this.punch.scene)," 2 ",this.recordedKeys.punch," 3 ",this.isPunch === undefined)
+        if((!this.punch || !this.punch.scene) && this.recordedKeys.punch && this.isPunch === undefined){
+            // console.log("init")
             this.createPunch()
-            this.isDonePunch = false
             this.lastTimePunch = time
+            this.isPunch = time - this.lastTimePunch < this.punchCooldown
         }
+        // console.log(this.isPunch)
         // update punch attack
-        if(this.isDonePunch === false){
+        if(this.isPunch){
+            // console.log("update")
             this.punch.update(time, delta);
+            this.isPunch = time - this.lastTimePunch < this.punchCooldown
+            return
         } 
         // destroy punch attack
         // TODO: change name of variables to fit it
-        if(this.isDonePunch === false && !cooldown){
+        if(this.isPunch == false){
+            // console.log("destroy")
             this.punch.destroy()
-            this.isDonePunch = undefined
+            this.isPunch = undefined
         }
     }
     createPunch(){
         this.punch = new Punch({
             scene: this.scene,
-            x: this.x,
-            y: this.y - 30,
+            x: -10,
+            y: -10,
             text: 'o',
             style: {
-                fontSize: 10
+                fontSize: 20
             }
-        }, this.lastHDir)
-        if("setSize" in this.punch.body)
-            this.punch.body.setSize(this.punch.width, this.punch.height, true)
+        }, this.lastHDir, {x: this.x, y: this.y}).setOrigin(0.5)
     }
     handlePlayerSize(){
         if(this.idle){
