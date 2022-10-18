@@ -3,12 +3,14 @@ export interface keysTypes{
   right: Phaser.Input.Keyboard.Key
   jump: Phaser.Input.Keyboard.Key
   crouch: Phaser.Input.Keyboard.Key
+  punch: Phaser.Input.Keyboard.Key
 }
 export interface keyBool{
   left: boolean
   right: boolean
   jump: boolean
   crouch: boolean
+  punch: boolean
 }
 declare global {
   interface Window {

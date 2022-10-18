@@ -10,13 +10,13 @@ export default class Game extends Phaser.Scene{
         // player
         this.player = new Player({
             scene: this,
-            x: this.scale.width/2 - 10,
-            y: this.scale.height/2,
+            x: 100,
+            y: this.scale.height - 51.5,
             text: '   \n\n',
             style: {
                 fontSize: 30
             }
-        })
+        }).setOrigin(0.5)
         const worldWidth = this.scale.width * 1.2
         const worldHeigth = this.scale.height - 10
         this.physics.world.setBounds(0, 0, worldWidth, worldHeigth)
