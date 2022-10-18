@@ -30,13 +30,18 @@ export default class Player extends Phaser.GameObjects.Text{
     lastVDir: string = "f"
     punch: Punch
     firstCrouch: boolean = true
+    lastTimePunch: number = 0
+    punchCooldown: number = 400// ms
+    isDonePunch: boolean|undefined = undefined
     
     update(time: number, delta: number): void{
         this.recordKeys()
         this.handlePlayerMovement(time)
         this.handlePlayerSize()
         this.handleAttack()
+        this.handlePunchAttack(time, delta)
     }
+    handleAttack(){}
     recordKeys(){
         // check input
         this.recordedKeys = {
@@ -47,52 +52,52 @@ export default class Player extends Phaser.GameObjects.Text{
             punch: this.keys.punch.isDown
         };
     }
-    handleAttack(){
-        // console.log("H ", this.lastHDir, " V ", this.lastVDir)
-        let x: number, y: number = this.y;
-        /*
-        check in case lastDir and pass x and y into new object punch
-        */
-       if(this.keys.punch.isDown){
-            switch(this.lastVDir){
-                case "l":
-                    x = this.x-30
-                    this.createPunch(x, y)
-                    break
-                case "r":
-                    x = this.x+30
-                    this.createPunch(x, y)
-                    break
-                default:
-                    console.log("error in dir of punch attack")
-                    break
-            }
+    handlePunchAttack(time: number, delta: number){
+        const cooldown = time - this.lastTimePunch < this.punchCooldown
+        // init slash attack
+        if((!this.punch || !this.punch.scene) && this.recordedKeys.punch && !cooldown){
+            this.createPunch()
+            this.isDonePunch = false
+            this.lastTimePunch = time
+        }
+        // update slash attack
+        if(this.isDonePunch === false){
+            this.punch.update(time, delta);
+        } 
+        // destroy slash attack
+        // TODO: change name of variables to fit it
+        if(this.isDonePunch === false && !cooldown){
+            this.punch.destroy()
+            this.isDonePunch = undefined
         }
     }
-    createPunch(x: number, y: number){
+    createPunch(){
         this.punch = new Punch({
             scene: this.scene,
             x: this.x,
-            y: this.y,
+            y: this.y - 30,
             text: 'o',
             style: {
-                fontSize: 20
+                fontSize: 10
             }
-        }).setOrigin(0)
+        }, this.lastHDir)
+        if("setSize" in this.punch.body)
+            this.punch.body.setSize(this.punch.width, this.punch.height, true)
     }
     handlePlayerSize(){
         if(this.idle){
             this.text = SpritePlayer.idle
-            this.setDisplaySize(55, 29 * 3)
+            if("setSize" in this.body)
+                this.body.setSize(40,70, true)
             // reset
             this.firstCrouch = true
         }else if(this.isCrouching){
             this.text = SpritePlayer.crouch
-            this.setDisplaySize(55, 29 * 2)
+            if("setSize" in this.body)
+                this.body.setSize(40, 50, true)
             // reset
             if(this.firstCrouch){
                 this.firstCrouch = false
-                this.setPosition(this.x, this.scene.scale.height-10)
             }
         }
     }
