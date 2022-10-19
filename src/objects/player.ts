@@ -72,7 +72,7 @@ export default class Player extends Phaser.GameObjects.Text{
         }
         // console.log(this.isPunch)
         // update punch attack
-        if(this.isPunch){
+        if(this.isPunch === true){
             // console.log("update")
             this.punch.update(time, delta);
             this.isPunch = time - this.lastTimePunch < this.punchCooldown
@@ -103,7 +103,12 @@ export default class Player extends Phaser.GameObjects.Text{
     }
     handlePlayerSize(){
         if(this.idle){
-            this.text = SpritePlayer.idle
+            if(this.isPunch === true && this.lastHDir === "r")
+                this.text = SpritePlayer.punchRight
+            else if (this.isPunch === true && this.lastHDir === "l")
+                this.text = SpritePlayer.punchLeft
+            else
+                this.text = SpritePlayer.idle
             if("offset" in this.body)
                 this.body.offset.y = 10
             //@ts-ignore
@@ -111,7 +116,12 @@ export default class Player extends Phaser.GameObjects.Text{
             // reset
             this.firstCrouch = true
         }else if(this.isCrouching){
-            this.text = SpritePlayer.crouch
+            if(this.isPunch === true && this.lastHDir === "r")
+                this.text = SpritePlayer.punchRightCrouch
+            else if (this.isPunch === true && this.lastHDir === "l")
+                this.text = SpritePlayer.punchLeftCrouch
+            else
+                this.text = SpritePlayer.crouch
             if("offset" in this.body)
                 this.body.offset.y = 29
             //@ts-ignore
