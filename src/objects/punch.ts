@@ -1,10 +1,11 @@
 import Phaser from "phaser";
 
 export default class Punch extends Phaser.GameObjects.Text{
-    constructor(config, lastHDir: String, playerPos: object){
+    constructor(config, lastHDir: String, playerPos: object, isCrouching: boolean){
         super(config.scene, config.x,config.y, config.text, config.style)
         this.lastHDir = lastHDir
         this.playerPos = playerPos
+        this.isCrouching = isCrouching
         this.scene.physics.world.enable(this)
         this.scene.add.existing(this)
         if("setAllowGravity" in this.body)
@@ -21,15 +22,21 @@ export default class Punch extends Phaser.GameObjects.Text{
     isFirst: boolean = true
     isFirst2: boolean = true
     isHit: boolean = false
+    isCrouching: boolean
     // TODO: add type interface for object
     playerPos: object
     update(time: number, delta: number): void {
-        this.setXY(35, 25)
+        this.setXY()
         this.handleDamage()
     }
-    setXY(posX: number, posY: number){
+    setXY(){
         if(this.isFirst === false) return
-        console.log("in")
+        let posX: number, posY: number
+        if(this.isCrouching){
+            posX=35; posY=5
+        }else{
+            posX=35; posY=25
+        }
         switch(this.lastHDir){
             case "l":
                 this.x = this.playerPos.x - posX
@@ -46,9 +53,9 @@ export default class Punch extends Phaser.GameObjects.Text{
     }
     handleDamage(){
         if(this.isFirst2 === false) return
-        let x: number, y: number;
-        x = Phaser.Math.Between(this.x - this.width/10 + 6, this.x + this.width/10 - 6)
-        y = Phaser.Math.Between(this.y - this.width/10 + 6, this.y + this.height/10 - 6)
+        let x: number, y: number, range: number = 12;
+        x = Phaser.Math.Between(this.x - range, this.x + range)
+        y = Phaser.Math.Between(this.y - range, this.y + range)
         this.showDamage(x, y)
         this.isFirst2 = false
     }
