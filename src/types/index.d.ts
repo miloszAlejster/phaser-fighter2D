@@ -16,11 +16,11 @@ export interface position{
   x: number
   y: number
 }
-declare global {
-  interface Window {
-    recording: {
-        keys: keyBool
-    };
-    time: number;
-  }
-}
+// declare global {
+//   interface Window {
+//     recording: {
+//         keys: keyBool
+//     };
+//     time: number;
+//   }
+// }
