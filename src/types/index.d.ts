@@ -12,6 +12,10 @@ export interface keyBool{
   crouch: boolean
   punch: boolean
 }
+export interface position{
+  x: number
+  y: number
+}
 declare global {
   interface Window {
     recording: {

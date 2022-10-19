@@ -1,7 +1,8 @@
 import Phaser from "phaser";
+import * as Types from "../types/index"
 
 export default class Punch extends Phaser.GameObjects.Text{
-    constructor(config, lastHDir: String, playerPos: object, isCrouching: boolean){
+    constructor(config, lastHDir: String, playerPos: Types.position, isCrouching: boolean){
         super(config.scene, config.x,config.y, config.text, config.style)
         this.lastHDir = lastHDir
         this.playerPos = playerPos
@@ -23,8 +24,7 @@ export default class Punch extends Phaser.GameObjects.Text{
     isFirst2: boolean = true
     isHit: boolean = false
     isCrouching: boolean
-    // TODO: add type interface for object
-    playerPos: object
+    playerPos: Types.position
     update(time: number, delta: number): void {
         this.setXY()
         this.handleDamage()
