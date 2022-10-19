@@ -95,7 +95,11 @@ export default class Player extends Phaser.GameObjects.Text{
             style: {
                 fontSize: 20
             }
-        }, this.lastHDir, {x: this.x, y: this.y}).setOrigin(0.5)
+        }, 
+        this.lastHDir, 
+        {x: this.x, y: this.y},
+        this.isCrouching
+        ).setOrigin(0.5)
     }
     handlePlayerSize(){
         if(this.idle){
