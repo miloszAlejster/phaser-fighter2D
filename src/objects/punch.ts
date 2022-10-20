@@ -15,11 +15,14 @@ export default class Punch extends Phaser.GameObjects.Text{
             this.body.setAllowGravity(false)
         if("offset" in this.body)   
             this.body.offset.y = 6.5
+        // TODO: change ts-ignore
         //@ts-ignore
         this.body.height = this.height - 10
         if(player.id === 1){
+            //@ts-ignore
             this.enemy = this.scene.player2
         }else if(player.id === 2){
+            //@ts-ignore
             this.enemy = this.scene.player
         }
     }
@@ -62,10 +65,11 @@ export default class Punch extends Phaser.GameObjects.Text{
     }
     handleDamage(){
         if(this.isFirst2 === false) return
-        if(this.checkOverlap(this.player, this.enemy)){
+        if(this.enemy && this.checkOverlap(this.player, this.enemy)){
             let x: number, y: number, range: number = 12;
             x = Phaser.Math.Between(this.x - range, this.x + range)
             y = Phaser.Math.Between(this.y - range, this.y + range)
+            this.enemy.hp -= this.damage
             this.showDamage(x, y)
         } 
         this.isFirst2 = false
