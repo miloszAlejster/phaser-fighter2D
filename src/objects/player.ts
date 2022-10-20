@@ -9,6 +9,7 @@ export default class Player extends Phaser.GameObjects.Text{
         this.scene.physics.world.enable(this)
         this.scene.add.existing(this)
         this.scene.physics.add.existing(this)
+        this.id = id
         // Type Guard
         if('setCollideWorldBounds' in this.body){
             this.body.setCollideWorldBounds(true)
@@ -43,7 +44,6 @@ export default class Player extends Phaser.GameObjects.Text{
         }
     }
     MovementSpeed: number = 150
-    
     keys: Types.keysTypes
     recordedKeys: Types.keyBool
     jumpCooldown: number = 0
@@ -56,13 +56,26 @@ export default class Player extends Phaser.GameObjects.Text{
     lastTimePunch: number = 0
     punchCooldown: number = 500// ms
     isPunch: boolean|undefined = undefined
+    id: number
+    hp: number = 100
+    dead: boolean = false
     
     update(time: number, delta: number): void{
+        if(this.dead === true) return
         this.recordKeys()
         this.handlePlayerMovement(time)
         this.handlePlayerSize()
         // this.handleAttack()
         this.handlePunchAttack(time, delta)
+        this.handlePlayerDeath()
+    }
+    handlePlayerDeath(){
+        if(this.hp <= 0){
+            this.destroy()
+            // TODO: change it to be more optimized
+            this.setPosition(-100, -100)
+            this.dead = true
+        }
     }
     // handleAttack(){}
     recordKeys(){
@@ -112,7 +125,8 @@ export default class Player extends Phaser.GameObjects.Text{
         }, 
         this.lastHDir, 
         {x: this.x, y: this.y},
-        this.isCrouching
+        this.isCrouching,
+        this
         ).setOrigin(0.5)
     }
     handlePlayerSize(){

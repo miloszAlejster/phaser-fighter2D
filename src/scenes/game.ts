@@ -33,9 +33,6 @@ export default class Game extends Phaser.Scene{
         this.physics.world.setBounds(0, 0, worldWidth, worldHeigth)
         this.physics.world.setBoundsCollision();
         this.physics.add.collider(this.player, this.player2)
-        // const camera = this.cameras.main;
-        // camera.setBounds(0, 0, worldWidth, worldHeigth);
-        // camera.startFollow(this.player)
     }
     update(time: number, delta: number): void {
         this.player.update(time, delta)
