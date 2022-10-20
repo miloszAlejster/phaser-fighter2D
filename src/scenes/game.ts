@@ -5,8 +5,10 @@ export default class Game extends Phaser.Scene{
     constructor(){
         super('game');
     }
-    player: Phaser.GameObjects.Text
-    player2: Phaser.GameObjects.Text
+    player: Player
+    player2: Player
+    playerHp: Phaser.GameObjects.Text
+    player2Hp: Phaser.GameObjects.Text
     create(){
         // player1
         this.player = new Player({
@@ -33,9 +35,26 @@ export default class Game extends Phaser.Scene{
         this.physics.world.setBounds(0, 0, worldWidth, worldHeigth)
         this.physics.world.setBoundsCollision();
         this.physics.add.collider(this.player, this.player2)
+        //GUI
+        this.add.text(80, 10, "Player 1").setOrigin(0.5)
+        this.add.text(this.scale.width-80, 10, "Player 2").setOrigin(0.5)
+        this.playerHp = this.add.text(33, 20, "||||||||||")
+        this.player2Hp = this.add.text(253, 20, "||||||||||")
     }
     update(time: number, delta: number): void {
         this.player.update(time, delta)
         this.player2.update(time, delta)
+        this.handleGuiHp()
+    }
+    handleGuiHp(){
+        let hp1: string = "", hp2: string = ""
+        for(let i = 0; i < this.player.hp/10; i++){
+            hp1 = hp1 + "|"
+        }
+        for(let i = 0; i < this.player2.hp/10; i++){
+            hp2 = hp2 + "|"
+        }
+        this.playerHp.text = hp1
+        this.player2Hp.text = hp2
     }
 }
