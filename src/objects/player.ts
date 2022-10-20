@@ -9,6 +9,7 @@ export default class Player extends Phaser.GameObjects.Text{
         this.scene.physics.world.enable(this)
         this.scene.add.existing(this)
         this.scene.physics.add.existing(this)
+        this.id = id
         // Type Guard
         if('setCollideWorldBounds' in this.body){
             this.body.setCollideWorldBounds(true)
@@ -56,6 +57,7 @@ export default class Player extends Phaser.GameObjects.Text{
     lastTimePunch: number = 0
     punchCooldown: number = 500// ms
     isPunch: boolean|undefined = undefined
+    id: number
     
     update(time: number, delta: number): void{
         this.recordKeys()
@@ -112,7 +114,8 @@ export default class Player extends Phaser.GameObjects.Text{
         }, 
         this.lastHDir, 
         {x: this.x, y: this.y},
-        this.isCrouching
+        this.isCrouching,
+        this
         ).setOrigin(0.5)
     }
     handlePlayerSize(){
