@@ -4,7 +4,7 @@ import * as SpritePlayer from "../consts/spritesPlayer"
 import Punch from "./punch"
 
 export default class Player extends Phaser.GameObjects.Text{
-    constructor(config){
+    constructor(config, id: number){
         super(config.scene, config.x, config.y, config.text, config.style)
         this.scene.physics.world.enable(this)
         this.scene.add.existing(this)
@@ -22,20 +22,34 @@ export default class Player extends Phaser.GameObjects.Text{
         this.body.height = this.height - 12
         //@ts-ignore
         this.body.width = this.width - 24
+        if(id === 1){
+            this.keys  = {
+                left: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A),
+                right: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D),
+                jump: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W),
+                crouch: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S),
+                punch: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.C)
+            }
+            this.lastHDir = "r"
+        }else if(id === 2){
+            this.keys  = {
+                left: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT),
+                right: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT),
+                jump: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP),
+                crouch: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN),
+                punch: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.N)
+            }
+            this.lastHDir = "l"
+        }
     }
     MovementSpeed: number = 150
-    keys: Types.keysTypes = {
-        left: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT),
-        right: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT),
-        jump: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP),
-        crouch: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN),
-        punch: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z)
-    }
+    
+    keys: Types.keysTypes
     recordedKeys: Types.keyBool
     jumpCooldown: number = 0
     idle: boolean = true
     isCrouching: boolean = false
-    lastHDir: string = "r"
+    lastHDir: string
     lastVDir: string = "f"
     punch: Punch
     firstCrouch: boolean = true
@@ -156,7 +170,7 @@ export default class Player extends Phaser.GameObjects.Text{
             && ('touching' in this.body) && this.body.blocked.down)
         {
             this.lastVDir = "u"
-            this.jumpCooldown = 12
+            this.jumpCooldown = 13
         }else{
             this.idle = true;
             this.isCrouching = false;
