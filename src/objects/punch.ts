@@ -9,13 +9,14 @@ export default class Punch extends Phaser.GameObjects.Text{
         this.playerPos = playerPos
         this.isCrouching = isCrouching
         this.player = player
+        // init physic
         this.scene.physics.world.enable(this)
         this.scene.add.existing(this)
         if("setAllowGravity" in this.body)
             this.body.setAllowGravity(false)
         if("offset" in this.body)   
             this.body.offset.y = 6.5
-        // TODO: change ts-ignore
+        // init player and enemy
         //@ts-ignore
         this.body.height = this.height - 10
         if(player.id === 1){
@@ -25,24 +26,19 @@ export default class Punch extends Phaser.GameObjects.Text{
             //@ts-ignore
             this.enemy = this.scene.player
         }
+        // handle collision
+        this.scene.physics.add.overlap(this.enemy, this, ()=>this.handleDamage(this.enemy))
+        this.setSpot()
     }
     lastHDir: String
     damageText: Phaser.GameObjects.Text
-    isDonePunch: boolean | boolean = false
     damage: number = 10
     isFirst: boolean = true
-    isFirst2: boolean = true
-    isHit: boolean = false
     isCrouching: boolean
     playerPos: Types.position
     player: Player
     enemy: Player
-    update(time: number, delta: number): void {
-        this.setXY()
-        this.handleDamage()
-    }
-    setXY(){
-        if(this.isFirst === false) return
+    setSpot(){
         let posX: number, posY: number
         if(this.isCrouching){
             posX=35; posY=5
@@ -61,18 +57,17 @@ export default class Punch extends Phaser.GameObjects.Text{
                 break;
             }
         this.y = this.playerPos.y - posY
-        this.isFirst = false
     }
-    handleDamage(){
-        if(this.isFirst2 === false) return
-        if(this.enemy && this.checkOverlap(this.player, this.enemy)){
+    handleDamage(enemy: Player){
+        if(this.isFirst === false) return
+        if(this.enemy){
             let x: number, y: number, range: number = 12;
             x = Phaser.Math.Between(this.x - range, this.x + range)
             y = Phaser.Math.Between(this.y - range, this.y + range)
-            this.enemy.hp -= this.damage
+            enemy.hp -= this.damage
             this.showDamage(x, y)
         } 
-        this.isFirst2 = false
+        this.isFirst = false
     }
     showDamage(x: number, y: number){
         this.damageText = this.scene.add.text(x, y, this.damage.toString(), {fontSize: '10px'})
@@ -82,12 +77,4 @@ export default class Punch extends Phaser.GameObjects.Text{
         this.damageText.destroy()
         this.damageText.setVisible(false)
     }
-    checkOverlap(
-        spriteA: Phaser.GameObjects.Text, 
-        spriteB: Phaser.GameObjects.Text
-    ): boolean {
-	    const boundsA = spriteA.getBounds(), boundsB = spriteB.getBounds();
-        const isColliding = Phaser.Geom.Intersects.RectangleToRectangle(boundsA, boundsB);
-	    return isColliding
-	}
 }
