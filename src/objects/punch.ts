@@ -29,7 +29,7 @@ export default class Punch extends Phaser.GameObjects.Text{
     lastHDir: String
     damageText: Phaser.GameObjects.Text
     isDonePunch: boolean | boolean = false
-    damage: number = 20
+    damage: number = 10
     isFirst: boolean = true
     isFirst2: boolean = true
     isHit: boolean = false

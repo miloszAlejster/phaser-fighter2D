@@ -6,8 +6,8 @@ import sceneKeys from './consts/sceneKeys'
 
 const config: Phaser.Types.Core.GameConfig = {
 	type: Phaser.AUTO,
-	width: 426,
-	height: 240,
+	width: 381,
+	height: 213,
 	backgroundColor: 0xaba8a1,
 	physics: { 
 		default: 'arcade',
