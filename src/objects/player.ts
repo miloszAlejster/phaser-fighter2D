@@ -65,19 +65,18 @@ export default class Player extends Phaser.GameObjects.Text{
         this.recordKeys()
         this.handlePlayerMovement(time)
         this.handlePlayerSize()
-        // this.handleAttack()
         this.handlePunchAttack(time, delta)
         this.handlePlayerDeath()
     }
     handlePlayerDeath(){
         if(this.hp <= 0){
             this.destroy()
-            // TODO: change it to be more optimized
+            // TODO: it can not stay like this
             this.setPosition(-100, -100)
+            this.punch.setPosition(-100, -100)
             this.dead = true
         }
     }
-    // handleAttack(){}
     recordKeys(){
         // check input
         this.recordedKeys = {
@@ -90,17 +89,13 @@ export default class Player extends Phaser.GameObjects.Text{
     }
     handlePunchAttack(time: number, delta: number){
         // init punch attack
-        // console.log("1 ",(!this.punch || !this.punch.scene)," 2 ",this.recordedKeys.punch," 3 ",this.isPunch === undefined)
         if((!this.punch || !this.punch.scene) && this.recordedKeys.punch && this.isPunch === undefined){
-            // console.log("init")
             this.createPunch()
             this.lastTimePunch = time
             this.isPunch = time - this.lastTimePunch < this.punchCooldown
         }
-        // console.log(this.isPunch)
         // update punch attack
         if(this.isPunch === true){
-            // console.log("update")
             this.punch.update(time, delta);
             this.isPunch = time - this.lastTimePunch < this.punchCooldown
             return
@@ -108,7 +103,6 @@ export default class Player extends Phaser.GameObjects.Text{
         // destroy punch attack
         // TODO: change name of variables to fit it
         if(this.isPunch == false){
-            // console.log("destroy")
             this.punch.destroy()
             this.isPunch = undefined
         }
