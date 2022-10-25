@@ -14,15 +14,10 @@ export default class Player extends Phaser.GameObjects.Text{
         if('setCollideWorldBounds' in this.body){
             this.body.setCollideWorldBounds(true)
         }
-        if("offset" in this.body)
-            this.body.offset.x = 12
-        if("offset" in this.body)
-            this.body.offset.y = 10
-        // it say that width is readonly but nor really?
-        //@ts-ignore
-        this.body.height = this.height - 12
-        //@ts-ignore
-        this.body.width = this.width - 24
+        if("setOffset" in this.body)
+            this.body.setOffset(12, 10)
+        if("setSize" in this.body)
+            this.body.setSize(this.width - 24, this.height - 12)
         if(id === 1){
             this.keys  = {
                 left: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A),
@@ -71,9 +66,7 @@ export default class Player extends Phaser.GameObjects.Text{
     handlePlayerDeath(){
         if(this.hp <= 0){
             this.destroy()
-            // TODO: it can not stay like this
-            this.setPosition(-100, -100)
-            this.punch.setPosition(-100, -100)
+            this.destroyPunch()
             this.dead = true
         }
     }
@@ -103,9 +96,12 @@ export default class Player extends Phaser.GameObjects.Text{
         // destroy punch attack
         // TODO: change name of variables to fit it
         if(this.isPunch == false){
-            this.punch.destroy()
-            this.isPunch = undefined
+            this.destroyPunch()
         }
+    }
+    destroyPunch(){
+        if (this.punch) this.punch.destroy()
+        this.isPunch = undefined
     }
     createPunch(){
         this.punch = new Punch({
