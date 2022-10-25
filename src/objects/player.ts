@@ -73,7 +73,7 @@ export default class Player extends Phaser.GameObjects.Text{
             this.destroy()
             // TODO: it can not stay like this
             this.setPosition(-100, -100)
-            this.punch.setPosition(-100, -100)
+            this.destroyPunch()
             this.dead = true
         }
     }
@@ -103,9 +103,12 @@ export default class Player extends Phaser.GameObjects.Text{
         // destroy punch attack
         // TODO: change name of variables to fit it
         if(this.isPunch == false){
-            this.punch.destroy()
-            this.isPunch = undefined
+            this.destroyPunch()
         }
+    }
+    destroyPunch(){
+        if (this.punch) this.punch.destroy()
+        this.isPunch = undefined
     }
     createPunch(){
         this.punch = new Punch({
