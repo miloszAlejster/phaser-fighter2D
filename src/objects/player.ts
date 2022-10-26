@@ -49,7 +49,8 @@ export default class Player extends Phaser.GameObjects.Text{
     punch: Punch
     firstCrouch: boolean = true
     lastTimePunch: number = 0
-    punchCooldown: number = 500// ms
+    punchCooldown: number = 100// ms
+    attackPunchCooldown: number = 500
     isPunch: boolean|undefined = undefined
     id: number
     hp: number = 100
@@ -82,20 +83,22 @@ export default class Player extends Phaser.GameObjects.Text{
     }
     handlePunchAttack(time: number, delta: number){
         // init punch attack
-        if((!this.punch || !this.punch.scene) && this.recordedKeys.punch && this.isPunch === undefined){
+        if((!this.punch || !this.punch.scene) 
+            && this.recordedKeys.punch 
+            && this.isPunch === undefined){
             this.createPunch()
             this.lastTimePunch = time
-            this.isPunch = time - this.lastTimePunch < this.punchCooldown
+            return
         }
         // update punch attack
-        if(this.isPunch === true){
+        // this.isPunch = time - this.lastTimePunch < this.punchCooldown
+        if(this.isPunch=== true){
             this.punch.update(time, delta);
-            this.isPunch = time - this.lastTimePunch < this.punchCooldown
             return
         } 
         // destroy punch attack
         // TODO: change name of variables to fit it
-        if(this.isPunch == false){
+        if(this.isPunch === false){
             this.destroyPunch()
         }
     }

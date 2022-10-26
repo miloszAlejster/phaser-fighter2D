@@ -8,12 +8,12 @@ const config: Phaser.Types.Core.GameConfig = {
 	type: Phaser.AUTO,
 	width: 381,
 	height: 213,
-	backgroundColor: 0xaba8a1,
+	backgroundColor: 0x000000,
 	physics: { 
 		default: 'arcade',
 		arcade: {
 			gravity: { y: 9000 },
-			debug: true
+			debug: false
 		}
 	},
 	zoom: 1.9
