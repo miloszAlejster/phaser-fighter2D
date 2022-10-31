@@ -12,10 +12,12 @@ export default class Punch extends Phaser.GameObjects.Text{
         // init physic
         this.scene.physics.world.enable(this)
         this.scene.add.existing(this)
-        if("setAllowGravity" in this.body)
+        if("setAllowGravity" in this.body){
             this.body.setAllowGravity(false)
-        if("offset" in this.body)   
+        }
+        if("offset" in this.body){
             this.body.offset.y = 6.5
+        }
         // init player and enemy
         //@ts-ignore
         this.body.height = this.height - 10
