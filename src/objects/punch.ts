@@ -19,6 +19,7 @@ export default class Punch extends Phaser.GameObjects.Text{
             this.body.offset.y = 6.5
         }
         // init player and enemy
+        // TODO: fix it
         //@ts-ignore
         this.body.height = this.height - 10
         if(player.id === 1){

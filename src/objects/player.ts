@@ -10,14 +10,15 @@ export default class Player extends Phaser.GameObjects.Text{
         this.scene.add.existing(this)
         this.scene.physics.add.existing(this)
         this.id = id
-        // Type Guard
         if('setCollideWorldBounds' in this.body){
             this.body.setCollideWorldBounds(true)
         }
-        if("setOffset" in this.body)
+        if("setOffset" in this.body){
             this.body.setOffset(12, 10)
-        if("setSize" in this.body)
+        }
+        if("setSize" in this.body){
             this.body.setSize(this.width - 24, this.height - 12)
+        }
         if(id === 1){
             this.keys  = {
                 left: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A),
@@ -48,9 +49,7 @@ export default class Player extends Phaser.GameObjects.Text{
     lastVDir: string = "f"
     punch: Punch
     firstCrouch: boolean = true
-    lastTimePunch: number = 0
-    punchCooldown: number = 100// ms
-    attackPunchCooldown: number = 500
+    punchCooldown: number = 300// ms
     isPunch: boolean = false
     id: number
     hp: number = 100
@@ -59,9 +58,9 @@ export default class Player extends Phaser.GameObjects.Text{
     update(time: number, delta: number): void{
         if(this.dead === true) return
         this.recordKeys()
-        this.handlePlayerMovement(time)
+        this.handlePlayerMovement()
         this.handlePlayerSize()
-        this.handlePunchAttack(time, delta)
+        this.handlePunchAttack()
         this.handlePlayerDeath()
     }
     handlePlayerDeath(){
@@ -81,13 +80,12 @@ export default class Player extends Phaser.GameObjects.Text{
             punch: this.keys.punch.isDown
         };
     }
-    handlePunchAttack(time: number, delta: number){
+    handlePunchAttack(){
         // init punch attack
-        if(this.recordedKeys.punch 
-            && this.isPunch === false){
+        if(this.recordedKeys.punch && this.isPunch === false){
             this.createPunch()
             this.isPunch = true;
-            this.scene.time.addEvent({delay:300, callback: this.destroyPunch, callbackScope: this} )
+            this.scene.time.addEvent({delay:this.punchCooldown, callback: this.destroyPunch, callbackScope: this})
         }
     }
     // destroy punch attack
@@ -142,7 +140,7 @@ export default class Player extends Phaser.GameObjects.Text{
             }
         }
     }
-    handlePlayerMovement(time: number){
+    handlePlayerMovement(){
         // reset
         if('setVelocity' in this.body)
             this.body.setVelocity(0);
