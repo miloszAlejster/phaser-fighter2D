@@ -2,6 +2,7 @@ import Phaser from "phaser";
 import * as Types from "../types/index"
 import * as SpritePlayer from "../consts/spritesPlayer"
 import Punch from "./punch"
+import Kick from "./kick";
 
 export default class Player extends Phaser.GameObjects.Text{
     constructor(config, id: number){
@@ -25,7 +26,8 @@ export default class Player extends Phaser.GameObjects.Text{
                 right: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D),
                 jump: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W),
                 crouch: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S),
-                punch: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.C)
+                punch: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.C),
+                kick: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F)
             }
             this.lastHDir = "r"
         }else if(id === 2){
@@ -34,7 +36,8 @@ export default class Player extends Phaser.GameObjects.Text{
                 right: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT),
                 jump: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP),
                 crouch: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN),
-                punch: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.N)
+                punch: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.N),
+                kick: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.M)
             }
             this.lastHDir = "l"
         }
@@ -48,25 +51,29 @@ export default class Player extends Phaser.GameObjects.Text{
     lastHDir: string
     lastVDir: string = "f"
     punch: Punch
+    kick: Kick
     firstCrouch: boolean = true
     punchCooldown: number = 300// ms
+    kickCooldown: number = 250// ms
     isPunch: boolean = false
+    isKick: boolean = false
     id: number
     hp: number = 100
     dead: boolean = false
-    
-    update(time: number, delta: number): void{
+    update(): void{
         if(this.dead === true) return
         this.recordKeys()
         this.handlePlayerMovement()
         this.handlePlayerSize()
         this.handlePunchAttack()
+        this.handleKickAttack()
         this.handlePlayerDeath()
     }
     handlePlayerDeath(){
         if(this.hp <= 0){
             this.destroy()
             this.destroyPunch()
+            this.destroyKick()
             this.dead = true
         }
     }
@@ -77,8 +84,17 @@ export default class Player extends Phaser.GameObjects.Text{
             right: this.keys.right.isDown,
             jump: this.keys.jump.isDown,
             crouch: this.keys.crouch.isDown,
-            punch: this.keys.punch.isDown
+            punch: this.keys.punch.isDown,
+            kick: this.keys.kick.isDown
         };
+    }
+    handleKickAttack(){
+        // init kick attack
+        if(this.recordedKeys.kick && this.isKick === false){
+            this.createKick()
+            this.isKick = true;
+            this.scene.time.addEvent({delay:this.kickCooldown, callback: this.destroyKick, callbackScope: this})
+        }
     }
     handlePunchAttack(){
         // init punch attack
@@ -88,10 +104,34 @@ export default class Player extends Phaser.GameObjects.Text{
             this.scene.time.addEvent({delay:this.punchCooldown, callback: this.destroyPunch, callbackScope: this})
         }
     }
+    destroyKick(){
+        if(this.kick){
+            this.kick.destroy()
+        }
+        this.isKick = false;
+    }
     // destroy punch attack
     destroyPunch(){
-        this.punch.destroy()
+        if(this.punch){
+            this.punch.destroy()
+        }
         this.isPunch = false;
+    }
+    createKick(){
+        this.kick = new Kick({
+            scene: this.scene,
+            x: -10,
+            y: -10,
+            text: 'o',
+            style: {
+                fontSize: 20
+            }
+        }, 
+        this.lastHDir, 
+        {x: this.x, y: this.y},
+        this.isCrouching,
+        this
+        ).setOrigin(0.5)
     }
     createPunch(){
         this.punch = new Punch({
@@ -111,24 +151,38 @@ export default class Player extends Phaser.GameObjects.Text{
     }
     handlePlayerSize(){
         if(this.idle){
-            if(this.isPunch === true && this.lastHDir === "r")
-                this.text = SpritePlayer.punchRight
-            else if (this.isPunch === true && this.lastHDir === "l")
-                this.text = SpritePlayer.punchLeft
-            else
+            if(this.isPunch){
+                if(this.lastHDir === "r")
+                    this.text = SpritePlayer.punchRight
+                else if (this.lastHDir === "l")
+                    this.text = SpritePlayer.punchLeft
+            }else if(this.isKick){
+                if(this.lastHDir === "r")
+                    this.text = SpritePlayer.kickRight
+                else if (this.lastHDir === "l")
+                    this.text = SpritePlayer.kickLeft
+            }else{
                 this.text = SpritePlayer.idle
-            if("offset" in this.body)
+            }
+            if("offset" in this.body){
                 this.body.offset.y = 10
+            }
             //@ts-ignore
             this.body.height = this.height - 12
             // reset
             this.firstCrouch = true
         }else if(this.isCrouching){
-            if(this.isPunch === true && this.lastHDir === "r")
-                this.text = SpritePlayer.punchRightCrouch
-            else if (this.isPunch === true && this.lastHDir === "l")
-                this.text = SpritePlayer.punchLeftCrouch
-            else
+            if(this.isPunch){
+                if(this.lastHDir === "r")
+                    this.text = SpritePlayer.punchRightCrouch
+                else if (this.lastHDir === "l")
+                    this.text = SpritePlayer.punchLeftCrouch
+            }else if(this.isKick){
+                if(this.lastHDir === "r")
+                    this.text = SpritePlayer.kickRightCrouch
+                else if (this.lastHDir === "l")
+                    this.text = SpritePlayer.kickLeftCrouch
+            }else
                 this.text = SpritePlayer.crouch
             if("offset" in this.body)
                 this.body.offset.y = 29

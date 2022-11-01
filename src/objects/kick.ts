@@ -1,10 +1,8 @@
 import Phaser from "phaser";
-// eslint-disable-next-line no-unused-vars
 import { position } from "../types/index"
-// eslint-disable-next-line no-unused-vars
 import Player from "./player";
 
-export default class Punch extends Phaser.GameObjects.Text{
+export default class Kick extends Phaser.GameObjects.Text{
     constructor(config, lastHDir: String, playerPos: position, isCrouching: boolean, player: Player){
         super(config.scene, config.x,config.y, config.text, config.style)
         this.lastHDir = lastHDir
@@ -20,10 +18,6 @@ export default class Punch extends Phaser.GameObjects.Text{
         if("offset" in this.body){
             this.body.offset.y = 6.5
         }
-        // init player and enemy
-        // TODO: fix it
-        //@ts-ignore
-        this.body.height = this.height - 10
         if(player.id === 1){
             //@ts-ignore
             this.enemy = this.scene.player2
@@ -46,9 +40,9 @@ export default class Punch extends Phaser.GameObjects.Text{
     setSpot(){
         let posX: number, posY: number
         if(this.isCrouching){
-            posX=35; posY=5
+            posX=35; posY=-30
         }else{
-            posX=35; posY=25
+            posX=35; posY=-10
         }
         switch(this.lastHDir){
             case "l":
@@ -58,7 +52,7 @@ export default class Punch extends Phaser.GameObjects.Text{
                 this.x = this.playerPos.x + posX
                 break;
             default:
-                console.log("error in punch.setXY")
+                console.log("error in kick.setXY")
                 break;
             }
         this.y = this.playerPos.y - posY

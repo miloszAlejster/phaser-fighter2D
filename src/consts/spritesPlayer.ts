@@ -28,4 +28,24 @@ const punchLeftCrouch2: string = '-o\\'
 const punchLeftCrouch3: string = '/ \\'
 const punchLeftCrouch: string = `${punchLeftCrouch1}\n${punchLeftCrouch2}\n${punchLeftCrouch3}`
 
-export {idle, crouch, punchRight, punchLeft, punchRightCrouch, punchLeftCrouch}
+const kickRight1: string = '-o'
+const kickRight3: string = '/|_'
+const kickRight2: string = '/ '
+const kickRight: string = `${kickRight1}\n${kickRight3}\n${kickRight2}`
+
+const kickLef1: string = ' o-'
+const kickLeft2: string = '_|\\'
+const kickLeft3: string = '  \\'
+const kickLeft: string = `${kickLef1}\n${kickLeft2}\n${kickLeft3}`
+
+const kickRightCrouch1: string = ''
+const kickRightCrouch3: string = '/o\\'
+const kickRightCrouch2: string = '/ -'
+const kickRightCrouch: string = `${kickRightCrouch1}\n${kickRightCrouch3}\n${kickRightCrouch2}`
+
+const kickLefCrouch1: string = ''
+const kickLeftCrouch2: string = '/o\\'
+const kickLeftCrouch3: string = '- \\'
+const kickLeftCrouch: string = `${kickLefCrouch1}\n${kickLeftCrouch2}\n${kickLeftCrouch3}`
+
+export {idle, crouch, punchRight, punchLeft, punchRightCrouch, punchLeftCrouch, kickRight, kickLeft, kickRightCrouch, kickLeftCrouch}
