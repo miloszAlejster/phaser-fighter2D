@@ -4,6 +4,7 @@ export interface keysTypes{
   jump: Phaser.Input.Keyboard.Key
   crouch: Phaser.Input.Keyboard.Key
   punch: Phaser.Input.Keyboard.Key
+  kick: Phaser.Input.Keyboard.Key
 }
 export interface keyBool{
   left: boolean
@@ -11,16 +12,9 @@ export interface keyBool{
   jump: boolean
   crouch: boolean
   punch: boolean
+  kick: boolean
 }
 export interface position{
   x: number
   y: number
 }
-// declare global {
-//   interface Window {
-//     recording: {
-//         keys: keyBool
-//     };
-//     time: number;
-//   }
-// }
