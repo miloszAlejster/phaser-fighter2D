@@ -1,5 +1,4 @@
 import Phaser from "phaser";
-// eslint-disable-next-line no-unused-vars
 import * as Types from "../types/index"
 import * as SpritePlayer from "../consts/spritesPlayer"
 import Punch from "./punch"
