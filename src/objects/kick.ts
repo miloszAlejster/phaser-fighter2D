@@ -3,12 +3,13 @@ import { position } from "../types/index"
 import Player from "./player";
 
 export default class Kick extends Phaser.GameObjects.Text{
-    constructor(config, lastHDir: String, playerPos: position, isCrouching: boolean, player: Player){
+    constructor(config, lastHDir: String, playerPos: position, isCrouching: boolean, player: Player, enemy: Player){
         super(config.scene, config.x,config.y, config.text, config.style)
         this.lastHDir = lastHDir
         this.playerPos = playerPos
         this.isCrouching = isCrouching
         this.player = player
+        this.enemy = enemy
         // init physic
         this.scene.physics.world.enable(this)
         this.scene.add.existing(this)
@@ -17,13 +18,6 @@ export default class Kick extends Phaser.GameObjects.Text{
         }
         if("offset" in this.body){
             this.body.offset.y = 6.5
-        }
-        if(player.id === 1){
-            //@ts-ignore
-            this.enemy = this.scene.player2
-        }else if(player.id === 2){
-            //@ts-ignore
-            this.enemy = this.scene.player
         }
         // handle collision
         this.scene.physics.add.overlap(this.enemy, this, ()=>this.handleDamage(this.enemy))

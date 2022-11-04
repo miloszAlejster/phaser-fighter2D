@@ -38,10 +38,11 @@ export default class Player extends Phaser.GameObjects.Text{
                 crouch: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN),
                 punch: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.N),
                 kick: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.M)
-            }
+            }   
             this.lastHDir = "l"
         }
     }
+    enemy: Player
     MovementSpeed: number = 150
     keys: Types.keysTypes
     recordedKeys: Types.keyBool
@@ -130,7 +131,8 @@ export default class Player extends Phaser.GameObjects.Text{
         this.lastHDir, 
         {x: this.x, y: this.y},
         this.isCrouching,
-        this
+        this,
+        this.enemy
         ).setOrigin(0.5)
     }
     createPunch(){
@@ -146,7 +148,8 @@ export default class Player extends Phaser.GameObjects.Text{
         this.lastHDir, 
         {x: this.x, y: this.y},
         this.isCrouching,
-        this
+        this,
+        this.enemy
         ).setOrigin(0.5)
     }
     handlePlayerSize(){
@@ -194,6 +197,9 @@ export default class Player extends Phaser.GameObjects.Text{
             }
         }
     }
+    handleHorizontalDir(){
+
+    }
     handlePlayerMovement(){
         // reset
         if('setVelocity' in this.body)
@@ -201,11 +207,9 @@ export default class Player extends Phaser.GameObjects.Text{
         // handle movement sideway
         if (this.recordedKeys.left === true)
         {
-            this.lastHDir = "l"
             this.body.velocity.x = -this.MovementSpeed
         } else if (this.recordedKeys.right === true)
         {
-            this.lastHDir = "r"
             this.body.velocity.x = this.MovementSpeed
         }
         // handle jump and crouch
