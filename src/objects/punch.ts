@@ -5,12 +5,15 @@ import { position } from "../types/index"
 import Player from "./player";
 
 export default class Punch extends Phaser.GameObjects.Text{
-    constructor(config, lastHDir: String, playerPos: position, isCrouching: boolean, player: Player){
+    constructor(config, lastHDir: String, 
+            playerPos: position, isCrouching: boolean, 
+            player: Player, enemy: Player){
         super(config.scene, config.x,config.y, config.text, config.style)
         this.lastHDir = lastHDir
         this.playerPos = playerPos
         this.isCrouching = isCrouching
         this.player = player
+        this.enemy = enemy
         // init physic
         this.scene.physics.world.enable(this)
         this.scene.add.existing(this)
@@ -20,19 +23,11 @@ export default class Punch extends Phaser.GameObjects.Text{
         if("offset" in this.body){
             this.body.offset.y = 6.5
         }
-        // init player and enemy
         // TODO: fix it
         //@ts-ignore
         this.body.height = this.height - 10
-        if(player.id === 1){
-            //@ts-ignore
-            this.enemy = this.scene.player2
-        }else if(player.id === 2){
-            //@ts-ignore
-            this.enemy = this.scene.player
-        }
         // handle collision
-        this.scene.physics.add.overlap(this.enemy, this, ()=>this.handleDamage(this.enemy))
+        this.scene.physics.add.overlap(enemy, this, ()=>this.handleDamage(enemy))
         this.setSpot()
     }
     lastHDir: String
@@ -65,13 +60,11 @@ export default class Punch extends Phaser.GameObjects.Text{
     }
     handleDamage(enemy: Player){
         if(this.isFirst === false) return
-        if(this.enemy){
-            let x: number, y: number, range: number = 12;
-            x = Phaser.Math.Between(this.x - range, this.x + range)
-            y = Phaser.Math.Between(this.y - range, this.y + range)
-            enemy.hp -= this.damage
-            this.showDamage(x, y)
-        } 
+        let x: number, y: number, range: number = 12;
+        x = Phaser.Math.Between(this.x - range, this.x + range)
+        y = Phaser.Math.Between(this.y - range, this.y + range)
+        enemy.hp -= this.damage
+        this.showDamage(x, y)
         this.isFirst = false
     }
     showDamage(x: number, y: number){

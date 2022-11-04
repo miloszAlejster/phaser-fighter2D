@@ -30,6 +30,8 @@ export default class Game extends Phaser.Scene{
                 fontSize: 30
             }
         }, 2).setOrigin(0.5)
+        this.player.enemy =this.player2;
+        this.player2.enemy =this.player;
         const worldWidth = this.scale.width
         const worldHeigth = this.scale.height - 10
         this.physics.world.setBounds(0, 0, worldWidth, worldHeigth)
@@ -41,10 +43,20 @@ export default class Game extends Phaser.Scene{
         this.playerHp = this.add.text(33, 20, "||||||||||")
         this.player2Hp = this.add.text(253, 20, "||||||||||")
     }
-    update(time: number, delta: number): void {
-        this.player.update(time, delta)
-        this.player2.update(time, delta)
+    update(): void {
+        this.player.update()
+        this.player2.update()
         this.handleGuiHp()
+        this.handlePlayersDir()
+    }
+    handlePlayersDir(){
+        if(this.player.x > this.player2.x){
+            this.player.lastHDir = "l"
+            this.player2.lastHDir = "r"
+        }else {
+            this.player.lastHDir = "r"
+            this.player2.lastHDir = "l"
+        }
     }
     handleGuiHp(){
         let hp1: string = "", hp2: string = ""
