@@ -47,6 +47,16 @@ export default class Game extends Phaser.Scene{
         this.player.update()
         this.player2.update()
         this.handleGuiHp()
+        this.handlePlayersDir()
+    }
+    handlePlayersDir(){
+        if(this.player.x > this.player2.x){
+            this.player.lastHDir = "l"
+            this.player2.lastHDir = "r"
+        }else {
+            this.player.lastHDir = "r"
+            this.player2.lastHDir = "l"
+        }
     }
     handleGuiHp(){
         let hp1: string = "", hp2: string = ""
