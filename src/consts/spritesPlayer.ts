@@ -28,12 +28,12 @@ const punchLeftCrouch2: string = '-o\\'
 const punchLeftCrouch3: string = '/ \\'
 const punchLeftCrouch: string = `${punchLeftCrouch1}\n${punchLeftCrouch2}\n${punchLeftCrouch3}`
 
-const kickRight1: string = '-o'
+const kickRight1: string = ' o'
 const kickRight3: string = '/|_'
 const kickRight2: string = '/ '
 const kickRight: string = `${kickRight1}\n${kickRight3}\n${kickRight2}`
 
-const kickLef1: string = ' o-'
+const kickLef1: string = ' o'
 const kickLeft2: string = '_|\\'
 const kickLeft3: string = '  \\'
 const kickLeft: string = `${kickLef1}\n${kickLeft2}\n${kickLeft3}`
