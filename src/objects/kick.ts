@@ -58,6 +58,7 @@ export default class Kick extends Phaser.GameObjects.Text{
             x = Phaser.Math.Between(this.x - range, this.x + range)
             y = Phaser.Math.Between(this.y - range, this.y + range)
             enemy.hp -= this.damage
+            this.enemy.isKnock = true;
             this.showDamage(x, y)
         } 
         this.isFirst = false
