@@ -27,7 +27,8 @@ export default class Player extends Phaser.GameObjects.Text{
                 jump: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W),
                 crouch: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S),
                 punch: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.C),
-                kick: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F)
+                kick: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F),
+                block: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.G)
             }
             this.lastHDir = "r"
         }else if(id === 2){
@@ -36,8 +37,9 @@ export default class Player extends Phaser.GameObjects.Text{
                 right: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT),
                 jump: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP),
                 crouch: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN),
-                punch: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.N),
-                kick: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.M)
+                punch: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.B),
+                kick: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.N),
+                block: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.M)
             }   
             this.lastHDir = "l"
         }
@@ -101,7 +103,8 @@ export default class Player extends Phaser.GameObjects.Text{
             jump: this.keys.jump.isDown,
             crouch: this.keys.crouch.isDown,
             punch: this.keys.punch.isDown,
-            kick: this.keys.kick.isDown
+            kick: this.keys.kick.isDown,
+            block: this.keys.block.isDown
         };
     }
     handleKickAttack(){
@@ -218,23 +221,19 @@ export default class Player extends Phaser.GameObjects.Text{
             this.body.setVelocity(0);
         }
         if(this.isKnock === false){
-            // handle movement sideway
-            if (this.recordedKeys.left === true)
-            {
+            // handle movement horizontaly
+            if (this.recordedKeys.left === true){
                 this.body.velocity.x = -this.MovementSpeed
-            } else if (this.recordedKeys.right === true)
-            {
+            } else if (this.recordedKeys.right === true){
                 this.body.velocity.x = this.MovementSpeed
             }
             // handle jump and crouch
-            if (this.recordedKeys.crouch === true)
-            {
+            if (this.recordedKeys.crouch === true){
                 this.lastVDir = "d"
                 this.idle = false;
                 this.isCrouching = true
             } else if (this.recordedKeys.jump === true 
-                && ('touching' in this.body) && this.body.blocked.down)
-            {
+                && ('touching' in this.body) && this.body.blocked.down){
                 this.lastVDir = "u"
                 this.jumpCooldown = 13
             }else{
