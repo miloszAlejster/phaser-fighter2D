@@ -214,30 +214,33 @@ export default class Player extends Phaser.GameObjects.Text{
     }
     handlePlayerMovement(){
         // reset
-        if('setVelocity' in this.body)
+        if('setVelocity' in this.body){
             this.body.setVelocity(0);
-        // handle movement sideway
-        if (this.recordedKeys.left === true)
-        {
-            this.body.velocity.x = -this.MovementSpeed
-        } else if (this.recordedKeys.right === true)
-        {
-            this.body.velocity.x = this.MovementSpeed
         }
-        // handle jump and crouch
-        if (this.recordedKeys.crouch === true)
-        {
-            this.lastVDir = "d"
-            this.idle = false;
-            this.isCrouching = true
-        } else if (this.recordedKeys.jump === true 
-            && ('touching' in this.body) && this.body.blocked.down)
-        {
-            this.lastVDir = "u"
-            this.jumpCooldown = 13
-        }else{
-            this.idle = true;
-            this.isCrouching = false;
+        if(this.isKnock === false){
+            // handle movement sideway
+            if (this.recordedKeys.left === true)
+            {
+                this.body.velocity.x = -this.MovementSpeed
+            } else if (this.recordedKeys.right === true)
+            {
+                this.body.velocity.x = this.MovementSpeed
+            }
+            // handle jump and crouch
+            if (this.recordedKeys.crouch === true)
+            {
+                this.lastVDir = "d"
+                this.idle = false;
+                this.isCrouching = true
+            } else if (this.recordedKeys.jump === true 
+                && ('touching' in this.body) && this.body.blocked.down)
+            {
+                this.lastVDir = "u"
+                this.jumpCooldown = 13
+            }else{
+                this.idle = true;
+                this.isCrouching = false;
+            }
         }
         // handle jump in time
         if(this.jumpCooldown > 0){
