@@ -55,13 +55,14 @@ export default class Player extends Phaser.GameObjects.Text{
     kick: Kick
     firstCrouch: boolean = true
     punchCooldown: number = 300// ms
-    kickCooldown: number = 250// ms
+    kickCooldown: number = 500// ms
     isPunch: boolean = false
     isKick: boolean = false
     id: number
     hp: number = 100
     dead: boolean = false
-    update(): void{
+    isKnock: boolean = false
+    update(){
         if(this.dead === true) return
         this.recordKeys()
         this.handlePlayerMovement()
@@ -69,6 +70,20 @@ export default class Player extends Phaser.GameObjects.Text{
         this.handlePunchAttack()
         this.handleKickAttack()
         this.handlePlayerDeath()
+        this.handleKnockout()
+    }
+    handleKnockout(){
+        if(this.isKnock && this.body){
+            if(this.lastHDir === "r"){
+                this.body.velocity.x -= 300;
+            }else if(this.lastHDir === "l"){
+                this.body.velocity.x += 300;
+            }
+            this.scene.time.addEvent({delay:100, callback: this.destroyKnockout, callbackScope: this})
+        }
+    }
+    destroyKnockout(){
+        this.isKnock = false;
     }
     handlePlayerDeath(){
         if(this.hp <= 0){
@@ -196,9 +211,6 @@ export default class Player extends Phaser.GameObjects.Text{
                 this.firstCrouch = false
             }
         }
-    }
-    handleHorizontalDir(){
-
     }
     handlePlayerMovement(){
         // reset
