@@ -44,6 +44,9 @@ export default class Player extends Phaser.GameObjects.Text{
             this.lastHDir = "l"
         }
     }
+    id: number
+    hp: number = 100
+    dead: boolean = false
     enemy: Player
     MovementSpeed: number = 150
     keys: Types.keysTypes
@@ -56,18 +59,22 @@ export default class Player extends Phaser.GameObjects.Text{
     punch: Punch
     kick: Kick
     firstCrouch: boolean = true
-    punchCooldown: number = 300// ms
-    kickCooldown: number = 500// ms
+    // cooldowns
+    punchCooldown: number = 500
+    kickCooldown: number = 600
+    blockCooldown: number = 1000
+    // durations
+    punchDuration: number = 100
+    kickDuration: number = 100
+    blockDuration: number = 100
+    // action flags
     isPunch: boolean = false
     isKick: boolean = false
-    id: number
-    hp: number = 100
-    dead: boolean = false
-    isKnock: boolean = false
     isBlock: boolean = false
+    isKnock: boolean = false
+    isPunchStart: boolean = false
+    isKickStart: boolean = false
     isBlockStart: boolean = false
-    blockCooldown: number = 1000
-    blockDuration: number = 100
     update(){
         if(this.dead === true) return
         this.recordKeys()
@@ -130,19 +137,26 @@ export default class Player extends Phaser.GameObjects.Text{
     }
     handleKickAttack(){
         // init kick attack
-        if(this.recordedKeys.kick && this.isKick === false){
+        if(this.recordedKeys.kick && this.isKick === false && this.isKickStart === false){
             this.createKick()
             this.isKick = true;
-            this.scene.time.addEvent({delay:this.kickCooldown, callback: this.destroyKick, callbackScope: this})
+            this.isKickStart = true
+            this.scene.time.addEvent({delay:this.kickDuration, callback: this.destroyKick, callbackScope: this})
+            this.scene.time.addEvent({delay:this.kickCooldown, callback: this.setCooldownKick, callbackScope: this})
         }
     }
     handlePunchAttack(){
         // init punch attack
-        if(this.recordedKeys.punch && this.isPunch === false){
+        if(this.recordedKeys.punch && this.isPunch === false && this.isPunchStart === false){
             this.createPunch()
             this.isPunch = true;
-            this.scene.time.addEvent({delay:this.punchCooldown, callback: this.destroyPunch, callbackScope: this})
+            this.isPunchStart = true;
+            this.scene.time.addEvent({delay:this.punchDuration, callback: this.destroyPunch, callbackScope: this})
+            this.scene.time.addEvent({delay:this.punchCooldown, callback: this.setCooldownPunch, callbackScope: this})
         }
+    }
+    setCooldownKick(){
+        this.isKickStart = false;
     }
     destroyKick(){
         if(this.kick){
@@ -150,7 +164,9 @@ export default class Player extends Phaser.GameObjects.Text{
         }
         this.isKick = false;
     }
-    // destroy punch attack
+    setCooldownPunch(){
+        this.isPunchStart = false;
+    }
     destroyPunch(){
         if(this.punch){
             this.punch.destroy()
