@@ -63,8 +63,12 @@ export default class Punch extends Phaser.GameObjects.Text{
         let x: number, y: number, range: number = 12;
         x = Phaser.Math.Between(this.x - range, this.x + range)
         y = Phaser.Math.Between(this.y - range, this.y + range)
-        enemy.hp -= this.damage
         this.showDamage(x, y)
+        if(this.enemy.isBlock === false){
+            enemy.hp -= this.damage
+        }else if(this.enemy.isBlock === true){
+            this.damageText.text = "BLOCK"
+        }
         this.isFirst = false
     }
     showDamage(x: number, y: number){

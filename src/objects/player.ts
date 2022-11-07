@@ -64,6 +64,10 @@ export default class Player extends Phaser.GameObjects.Text{
     hp: number = 100
     dead: boolean = false
     isKnock: boolean = false
+    isBlock: boolean = false
+    isBlockStart: boolean = false
+    blockCooldown: number = 1000
+    blockDuration: number = 100
     update(){
         if(this.dead === true) return
         this.recordKeys()
@@ -73,6 +77,23 @@ export default class Player extends Phaser.GameObjects.Text{
         this.handleKickAttack()
         this.handlePlayerDeath()
         this.handleKnockout()
+        this.handleBlock()
+    }
+    handleBlock(){
+        if(this.isKick === false && this.isPunch === false 
+                && this.isBlockStart === false && this.isBlock === false 
+                && this.recordedKeys.block){
+            this.isBlock = true;
+            this.isBlockStart = true;
+            this.scene.time.addEvent({delay:this.blockCooldown, callback: this.setCooldownBlock, callbackScope: this})
+            this.scene.time.addEvent({delay:this.blockDuration, callback: this.setDurationBlock, callbackScope: this})
+        }
+    }
+    setCooldownBlock(){
+        this.isBlockStart = false;
+    }
+    setDurationBlock(){
+        this.isBlock = false;
     }
     handleKnockout(){
         if(this.isKnock && this.body){
@@ -172,16 +193,24 @@ export default class Player extends Phaser.GameObjects.Text{
     }
     handlePlayerSize(){
         if(this.idle){
-            if(this.isPunch){
-                if(this.lastHDir === "r")
+            if(this.isBlock){
+                if(this.lastHDir === "r"){
+                    this.text = SpritePlayer.blockRight
+                }else if (this.lastHDir === "l"){
+                    this.text = SpritePlayer.blockLeft
+                }
+            }else if(this.isPunch){
+                if(this.lastHDir === "r"){
                     this.text = SpritePlayer.punchRight
-                else if (this.lastHDir === "l")
+                }else if (this.lastHDir === "l"){
                     this.text = SpritePlayer.punchLeft
+                }
             }else if(this.isKick){
-                if(this.lastHDir === "r")
+                if(this.lastHDir === "r"){
                     this.text = SpritePlayer.kickRight
-                else if (this.lastHDir === "l")
+                }else if(this.lastHDir === "l"){
                     this.text = SpritePlayer.kickLeft
+                }
             }else{
                 this.text = SpritePlayer.idle
             }
@@ -193,20 +222,30 @@ export default class Player extends Phaser.GameObjects.Text{
             // reset
             this.firstCrouch = true
         }else if(this.isCrouching){
-            if(this.isPunch){
-                if(this.lastHDir === "r")
+            if(this.isBlock){
+                if(this.lastHDir === "r"){
+                    this.text = SpritePlayer.blockRightCrouch
+                }else if (this.lastHDir === "l"){
+                    this.text = SpritePlayer.blockLeftCrouch
+                }
+            }else if(this.isPunch){
+                if(this.lastHDir === "r"){
                     this.text = SpritePlayer.punchRightCrouch
-                else if (this.lastHDir === "l")
+                }else if(this.lastHDir === "l"){
                     this.text = SpritePlayer.punchLeftCrouch
+                }
             }else if(this.isKick){
-                if(this.lastHDir === "r")
+                if(this.lastHDir === "r"){
                     this.text = SpritePlayer.kickRightCrouch
-                else if (this.lastHDir === "l")
+                }else if(this.lastHDir === "l"){
                     this.text = SpritePlayer.kickLeftCrouch
-            }else
+                }
+            }else{
                 this.text = SpritePlayer.crouch
-            if("offset" in this.body)
+            }
+            if("offset" in this.body){
                 this.body.offset.y = 29
+            }
             //@ts-ignore
             this.body.height = this.height-31
             // reset
