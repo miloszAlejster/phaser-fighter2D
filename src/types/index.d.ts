@@ -5,6 +5,7 @@ export interface keysTypes{
   crouch: Phaser.Input.Keyboard.Key
   punch: Phaser.Input.Keyboard.Key
   kick: Phaser.Input.Keyboard.Key
+  block: Phaser.Input.Keyboard.Key
 }
 export interface keyBool{
   left: boolean
@@ -13,6 +14,7 @@ export interface keyBool{
   crouch: boolean
   punch: boolean
   kick: boolean
+  block: boolean
 }
 export interface position{
   x: number
