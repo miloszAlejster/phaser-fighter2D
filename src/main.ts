@@ -3,6 +3,7 @@ import Game from './scenes/game';
 import BootScene from './scenes/BootScene';
 import PreloaderScene from './scenes/PreloaderScene';
 import sceneKeys from './consts/sceneKeys'
+import TitleScreen from './scenes/TitleScreen';
 
 const config: Phaser.Types.Core.GameConfig = {
 	type: Phaser.AUTO,
@@ -23,4 +24,5 @@ const game = new Phaser.Game(config);
 game.scene.add(sceneKeys.Game, Game)
 game.scene.add(sceneKeys.BootScene, BootScene)
 game.scene.add(sceneKeys.PreloaderScene, PreloaderScene)
+game.scene.add(sceneKeys.TitleScreen, TitleScreen)
 game.scene.start(sceneKeys.BootScene)
