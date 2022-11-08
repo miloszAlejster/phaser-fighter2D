@@ -37,9 +37,9 @@ export default class Player extends Phaser.GameObjects.Text{
                 right: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT),
                 jump: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP),
                 crouch: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN),
-                punch: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.B),
-                kick: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.N),
-                block: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.M)
+                punch: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.M),
+                kick: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.K),
+                block: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.L)
             }   
             this.lastHDir = "l"
         }
