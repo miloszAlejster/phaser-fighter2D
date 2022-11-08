@@ -37,9 +37,9 @@ export default class Player extends Phaser.GameObjects.Text{
                 right: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT),
                 jump: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP),
                 crouch: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN),
-                punch: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.B),
-                kick: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.N),
-                block: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.M)
+                punch: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.M),
+                kick: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.K),
+                block: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.L)
             }   
             this.lastHDir = "l"
         }
@@ -137,7 +137,8 @@ export default class Player extends Phaser.GameObjects.Text{
     }
     handleKickAttack(){
         // init kick attack
-        if(this.recordedKeys.kick && this.isKick === false && this.isKickStart === false){
+        if(this.recordedKeys.kick && this.isKick === false && this.isKickStart === false 
+            && this.isPunch == false && this.isKnock == false && this.isBlock == false){
             this.createKick()
             this.isKick = true;
             this.isKickStart = true
@@ -147,7 +148,8 @@ export default class Player extends Phaser.GameObjects.Text{
     }
     handlePunchAttack(){
         // init punch attack
-        if(this.recordedKeys.punch && this.isPunch === false && this.isPunchStart === false){
+        if(this.recordedKeys.punch && this.isPunch === false && this.isPunchStart === false 
+            && this.isKick === false && this.isKnock == false && this.isBlock == false){
             this.createPunch()
             this.isPunch = true;
             this.isPunchStart = true;
