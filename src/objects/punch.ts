@@ -59,17 +59,19 @@ export default class Punch extends Phaser.GameObjects.Text{
         this.y = this.playerPos.y - posY
     }
     handleDamage(enemy: Player){
-        if(this.isFirst === false) return
-        let x: number, y: number, range: number = 12;
-        x = Phaser.Math.Between(this.x - range, this.x + range)
-        y = Phaser.Math.Between(this.y - range, this.y + range)
-        this.showDamage(x, y)
-        if(this.enemy.isBlock === false){
-            enemy.hp -= this.damage
-        }else if(this.enemy.isBlock === true){
-            this.damageText.text = "BLOCK"
+        if(this.enemy.immortal === false){
+            if(this.isFirst === false) return
+            let x: number, y: number, range: number = 12;
+            x = Phaser.Math.Between(this.x - range, this.x + range)
+            y = Phaser.Math.Between(this.y - range, this.y + range)
+            this.showDamage(x, y)
+            if(this.enemy.isBlock === false){
+                enemy.hp -= this.damage
+            }else if(this.enemy.isBlock === true){
+                this.damageText.text = "BLOCK"
+            }
+            this.isFirst = false
         }
-        this.isFirst = false
     }
     showDamage(x: number, y: number){
         this.damageText = this.scene.add.text(x, y, this.damage.toString(), {fontSize: '10px'})

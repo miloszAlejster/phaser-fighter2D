@@ -5,12 +5,14 @@ import Punch from "./punch"
 import Kick from "./kick";
 
 export default class Player extends Phaser.GameObjects.Text{
-    constructor(config, id: number){
+    constructor(config, id: number, hp: number, immortal: boolean){
         super(config.scene, config.x, config.y, config.text, config.style)
         this.scene.physics.world.enable(this)
         this.scene.add.existing(this)
         this.scene.physics.add.existing(this)
         this.id = id
+        this.hp = hp
+        this.immortal = immortal
         if('setCollideWorldBounds' in this.body){
             this.body.setCollideWorldBounds(true)
         }
@@ -44,8 +46,9 @@ export default class Player extends Phaser.GameObjects.Text{
             this.lastHDir = "l"
         }
     }
+    immortal: boolean
     id: number
-    hp: number = 100
+    hp: number
     dead: boolean = false
     enemy: Player
     MovementSpeed: number = 150

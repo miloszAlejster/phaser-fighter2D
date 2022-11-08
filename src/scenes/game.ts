@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 import Player from "~/objects/player";
 import SceneKeys from "~/consts/sceneKeys";
+import * as Types from "~/types/index"
 
 export default class Game extends Phaser.Scene{
     constructor(){
@@ -13,6 +14,10 @@ export default class Game extends Phaser.Scene{
     player1Name: Phaser.GameObjects.Text
     player2Name: Phaser.GameObjects.Text
     overText: Phaser.GameObjects.Text
+    settings: Types.gameSettings
+    init(settings: Types.gameSettings){
+        this.settings = settings
+    }
     create(){
         // player1
         this.player = new Player({
@@ -23,7 +28,7 @@ export default class Game extends Phaser.Scene{
             style: {
                 fontSize: 30
             }
-        }, 1).setOrigin(0.5)
+        }, 1, this.settings.hp1, this.settings.immortality).setOrigin(0.5)
         // player2
         this.player2 = new Player({
             scene: this,
@@ -33,7 +38,7 @@ export default class Game extends Phaser.Scene{
             style: {
                 fontSize: 30
             }
-        }, 2).setOrigin(0.5)
+        }, 2, this.settings.hp2, this.settings.immortality).setOrigin(0.5)
         this.player.enemy =this.player2;
         this.player2.enemy =this.player;
         const worldWidth = this.scale.width
@@ -47,6 +52,10 @@ export default class Game extends Phaser.Scene{
         this.playerHp = this.add.text(33, 20, "||||||||||")
         this.player2Hp = this.add.text(253, 20, "||||||||||")
         this.overText = this.add.text(this.scale.width/2, this.scale.height/2-20, "", {fontSize: '40px'}).setOrigin(0.5)
+        // end game
+        this.input.keyboard.on('keydown-ESC', () => {
+            this.handleChangeScene()
+        })
     }
     update(): void {
         this.player.update()
@@ -61,10 +70,8 @@ export default class Game extends Phaser.Scene{
         const p2Death: boolean = this.player2.hp <= 0;
         if(p1Death || p2Death){
             if(p1Death){
-                // player 2 won
                 this.overText.setText("Player 2 WON")
             }else if(p2Death){
-                // player 1 won
                 this.overText.setText("Player 1 WON")
             }
             this.player1Name.destroy()
@@ -88,11 +95,27 @@ export default class Game extends Phaser.Scene{
     }
     handleGuiHp(){
         let hp1: string = "", hp2: string = ""
-        for(let i = 0; i < this.player.hp/10; i++){
+        const difHp1 = this.player.hp > 100 ? Math.abs(this.player.hp - 100) : 0;
+        const difHp2 = this.player2.hp > 100 ? Math.abs(this.player2.hp - 100) : 0;
+        // Player 1
+        for(let i = 0; i < (this.player.hp - difHp1)/10; i++){
             hp1 = hp1 + "|"
         }
-        for(let i = 0; i < this.player2.hp/10; i++){
+        if(this.player.hp > 100){
+            hp1 = hp1 + "\n"
+            for(let i = 0; i < (this.player.hp/10 - 10) % 21 ; i++){
+                hp1 = hp1 + "|"
+            }
+        }
+        // Player 2
+        for(let i = 0; i < (this.player2.hp - difHp2)/10; i++){
             hp2 = hp2 + "|"
+        }
+        if(this.player2.hp > 100){
+            hp2 = hp2 + "\n"
+            for(let i = 0; i < (this.player2.hp/10 - 10) % 21 ; i++){
+                hp2 = hp2 + "|"
+            }
         }
         this.playerHp.text = hp1
         this.player2Hp.text = hp2

@@ -1,7 +1,13 @@
 import Phaser from "phaser";
 import SceneKeys from '../consts/sceneKeys'
+import * as Types from "types/index"
 
 export default class PreloaderScene extends Phaser.Scene{
+    settings: Types.gameSettings = {
+        hp1: 100,
+        hp2: 100,
+        immortality: false
+    }
     constructor(){
         super('preloader')
     }
@@ -9,6 +15,6 @@ export default class PreloaderScene extends Phaser.Scene{
 
     }
     create(){
-        this.scene.start(SceneKeys.TitleScreen)
+        this.scene.start(SceneKeys.MenuScene, this.settings)
     }
 }
