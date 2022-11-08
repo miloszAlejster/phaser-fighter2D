@@ -14,6 +14,9 @@ export default class TitleScreen extends Phaser.Scene{
             this.mainText.destroy()
             this.subText.destroy()
         })
+        this.input.keyboard.once("keydown-ESC", ()=>{
+            this.scene.start(SceneKeys.MenuScene)
+        })
     }
     handleReady(){
         this.time.addEvent({delay:700, callback: this.handleNextScene, callbackScope: this})
