@@ -7,6 +7,11 @@ export interface keysTypes{
   kick: Phaser.Input.Keyboard.Key
   block: Phaser.Input.Keyboard.Key
 }
+export interface gameSettings{
+  hp1: number
+  hp2: number
+  immortality: boolean
+}
 export interface keyBool{
   left: boolean
   right: boolean

@@ -53,18 +53,21 @@ export default class Kick extends Phaser.GameObjects.Text{
     }
     handleDamage(enemy: Player){
         if(this.isFirst === false) return
-        if(this.enemy){
-            let x: number, y: number, range: number = 12;
-            x = Phaser.Math.Between(this.x - range, this.x + range)
-            y = Phaser.Math.Between(this.y - range, this.y + range)
-            this.showDamage(x, y)
-            if(this.enemy.isBlock === false){
-                enemy.hp -= this.damage
+            if(this.enemy && this.enemy.immortal === false){
+                let x: number, y: number, range: number = 12;
+                x = Phaser.Math.Between(this.x - range, this.x + range)
+                y = Phaser.Math.Between(this.y - range, this.y + range)
+                this.showDamage(x, y)
+                if(this.enemy.isBlock === false){
+                    enemy.hp -= this.damage
+                    
+                }else if(this.enemy.isBlock === true){
+                    this.damageText.text = "BLOCK"
+                }
                 this.enemy.isKnock = true;
-            }else if(this.enemy.isBlock === true){
-                this.damageText.text = "BLOCK"
+            }else if(this.enemy && this.enemy.immortal === true){
+                this.enemy.isKnock = true;
             }
-        } 
         this.isFirst = false
     }
     showDamage(x: number, y: number){
