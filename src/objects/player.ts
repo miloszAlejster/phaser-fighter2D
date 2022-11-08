@@ -137,7 +137,8 @@ export default class Player extends Phaser.GameObjects.Text{
     }
     handleKickAttack(){
         // init kick attack
-        if(this.recordedKeys.kick && this.isKick === false && this.isKickStart === false){
+        if(this.recordedKeys.kick && this.isKick === false && this.isKickStart === false 
+            && this.isPunch == false && this.isKnock == false && this.isBlock == false){
             this.createKick()
             this.isKick = true;
             this.isKickStart = true
@@ -147,7 +148,8 @@ export default class Player extends Phaser.GameObjects.Text{
     }
     handlePunchAttack(){
         // init punch attack
-        if(this.recordedKeys.punch && this.isPunch === false && this.isPunchStart === false){
+        if(this.recordedKeys.punch && this.isPunch === false && this.isPunchStart === false 
+            && this.isKick === false && this.isKnock == false && this.isBlock == false){
             this.createPunch()
             this.isPunch = true;
             this.isPunchStart = true;
