@@ -3,6 +3,7 @@ import * as Types from "../types/index"
 import * as SpritePlayer from "../consts/spritesPlayer"
 import Punch from "./punch"
 import Kick from "./kick";
+import * as Colors from "~/consts/colors"
 
 export default class Player extends Phaser.GameObjects.Text{
     constructor(config, id: number, hp: number, immortal: boolean){
@@ -33,6 +34,7 @@ export default class Player extends Phaser.GameObjects.Text{
                 block: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.G)
             }
             this.lastHDir = "r"
+            this.setColor(Colors.default.p1Color)
         }else if(id === 2){
             this.keys  = {
                 left: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT),
@@ -43,6 +45,7 @@ export default class Player extends Phaser.GameObjects.Text{
                 kick: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.K),
                 block: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.L)
             }   
+            this.setColor(Colors.default.p2Color)
             this.lastHDir = "l"
         }
     }

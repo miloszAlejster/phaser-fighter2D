@@ -2,6 +2,7 @@ import Phaser from "phaser";
 import Player from "~/objects/player";
 import SceneKeys from "~/consts/sceneKeys";
 import * as Types from "~/types/index"
+import * as Colors from "~/consts/colors"
 
 export default class Game extends Phaser.Scene{
     constructor(){
@@ -47,8 +48,8 @@ export default class Game extends Phaser.Scene{
         this.physics.world.setBoundsCollision();
         this.physics.add.collider(this.player, this.player2)
         //GUI
-        this.player1Name = this.add.text(80, 10, "Player 1").setOrigin(0.5)
-        this.player2Name = this.add.text(this.scale.width-80, 10, "Player 2").setOrigin(0.5)
+        this.player1Name = this.add.text(80, 10, "Player 1").setOrigin(0.5).setColor(Colors.default.p1Color)
+        this.player2Name = this.add.text(this.scale.width-80, 10, "Player 2").setOrigin(0.5).setColor(Colors.default.p2Color)
         this.playerHp = this.add.text(33, 20, "||||||||||")
         this.player2Hp = this.add.text(253, 20, "||||||||||")
         this.overText = this.add.text(this.scale.width/2, this.scale.height/2-20, "", {fontSize: '40px'}).setOrigin(0.5)
