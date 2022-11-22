@@ -7,3 +7,6 @@ nvm use node
 
 ### Parcel
 npm install -g parcel-bundler
+
+### Assets
+players - Asset Bakery https://assetbakery.itch.io/
