@@ -1,6 +1,6 @@
 import Phaser from "phaser";
 // eslint-disable-next-line no-unused-vars
-import { position } from "../types/index"
+import { position } from "../../types/index"
 // eslint-disable-next-line no-unused-vars
 import Player from "./player";
 

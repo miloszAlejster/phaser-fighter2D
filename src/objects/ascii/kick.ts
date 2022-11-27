@@ -1,5 +1,5 @@
 import Phaser from "phaser";
-import { position } from "../types/index"
+import { position } from "../../types/index"
 import Player from "./player";
 
 export default class Kick extends Phaser.GameObjects.Text{
