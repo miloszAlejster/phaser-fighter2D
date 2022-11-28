@@ -29,6 +29,6 @@ export default class TitleScreen extends Phaser.Scene{
         this.readText.destroy()
     }
     handleNextScene(){
-        this.scene.start(SceneKeys.Game, this.settings)
+        this.scene.start(SceneKeys.GameGraphic, this.settings)
     }
 }

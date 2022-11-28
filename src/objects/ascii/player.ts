@@ -1,6 +1,6 @@
 import Phaser from "phaser";
-import * as Types from "../types/index"
-import * as SpritePlayer from "../consts/spritesPlayer"
+import * as Types from "../../types/index"
+import * as SpritePlayer from "../../consts/spritesPlayer"
 import Punch from "./punch"
 import Kick from "./kick";
 import * as Colors from "~/consts/colors"

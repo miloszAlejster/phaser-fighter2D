@@ -1,35 +1,27 @@
 import Phaser from "phaser";
-import Player from "~/objects/player";
+import PlayerAscii from "~/objects/ascii/player";
 import SceneKeys from "~/consts/sceneKeys";
 import * as Types from "~/types/index"
 import * as Colors from "~/consts/colors"
 
-export default class Game extends Phaser.Scene{
+export default class GameAscii extends Phaser.Scene{
     constructor(){
-        super('game');
+        super('game-ascii');
     }
-    player: Player
-    player2: Player
-    playerHp: Phaser.GameObjects.Text
+    playerAscii1: PlayerAscii
+    playerAscii2: PlayerAscii
+    player1Hp: Phaser.GameObjects.Text
     player2Hp: Phaser.GameObjects.Text
     player1Name: Phaser.GameObjects.Text
     player2Name: Phaser.GameObjects.Text
     overText: Phaser.GameObjects.Text
     settings: Types.gameSettings
-    player1Test: Phaser.GameObjects.Sprite
-    player2Test: Phaser.GameObjects.Sprite
     init(settings: Types.gameSettings){
         this.settings = settings
     }
     create(){
-        // sprite test
-        this.player1Test = this.add.sprite(50, 50, 'player_1').setDepth(1);
-        this.player2Test = this.add.sprite(100, 50, 'player_2').setDepth(1);
-        this.player2Test.flipX=true;
-        this.player1Test.play('idle-a1');
-        this.player2Test.play('idle-g2');
         // player1
-        this.player = new Player({
+        this.playerAscii1 = new PlayerAscii({
             scene: this,
             x: 100,
             y: this.scale.height - 51.5,
@@ -39,7 +31,7 @@ export default class Game extends Phaser.Scene{
             }
         }, 1, this.settings.hp1, this.settings.immortality).setOrigin(0.5)
         // player2
-        this.player2 = new Player({
+        this.playerAscii2 = new PlayerAscii({
             scene: this,
             x: this.scale.width-100,
             y: this.scale.height - 51.5,
@@ -48,17 +40,17 @@ export default class Game extends Phaser.Scene{
                 fontSize: 30
             }
         }, 2, this.settings.hp2, this.settings.immortality).setOrigin(0.5)
-        this.player.enemy =this.player2;
-        this.player2.enemy =this.player;
+        this.playerAscii1.enemy = this.playerAscii2;
+        this.playerAscii2.enemy = this.playerAscii1;
         const worldWidth = this.scale.width
         const worldHeigth = this.scale.height - 10
         this.physics.world.setBounds(0, 0, worldWidth, worldHeigth)
         this.physics.world.setBoundsCollision();
-        this.physics.add.collider(this.player, this.player2)
+        this.physics.add.collider(this.playerAscii1, this.playerAscii2)
         //GUI
         this.player1Name = this.add.text(80, 10, "Player 1").setOrigin(0.5).setColor(Colors.default.p1Color)
         this.player2Name = this.add.text(this.scale.width-80, 10, "Player 2").setOrigin(0.5).setColor(Colors.default.p2Color)
-        this.playerHp = this.add.text(33, 20, "||||||||||")
+        this.player1Hp = this.add.text(33, 20, "||||||||||")
         this.player2Hp = this.add.text(253, 20, "||||||||||")
         this.overText = this.add.text(this.scale.width/2, this.scale.height/2-20, "", {fontSize: '40px'}).setOrigin(0.5)
         // end game
@@ -67,16 +59,16 @@ export default class Game extends Phaser.Scene{
         })
     }
     update(): void {
-        this.player.update()
-        this.player2.update()
+        this.playerAscii1.update()
+        this.playerAscii2.update()
         this.handleGuiHp()
         this.handlePlayersDir()
         this.handleOver()
     }
     handleOver(){
         // TODO: change it to make it prettier
-        const p1Death: boolean = this.player.hp <= 0
-        const p2Death: boolean = this.player2.hp <= 0;
+        const p1Death: boolean = this.playerAscii1.hp <= 0
+        const p2Death: boolean = this.playerAscii2.hp <= 0;
         if(p1Death || p2Death){
             if(p1Death){
                 this.overText.setText("Player 2 WON")
@@ -85,7 +77,7 @@ export default class Game extends Phaser.Scene{
             }
             this.player1Name.destroy()
             this.player2Name.destroy()
-            this.playerHp.destroy()
+            this.player1Hp.destroy()
             this.player2Hp.destroy()
             this.time.addEvent({delay:4000, callback: this.handleChangeScene, callbackScope: this} )
         }
@@ -94,39 +86,39 @@ export default class Game extends Phaser.Scene{
         this.scene.start(SceneKeys.TitleScreen)
     }
     handlePlayersDir(){
-        if(this.player.x > this.player2.x){
-            this.player.lastHDir = "l"
-            this.player2.lastHDir = "r"
+        if(this.playerAscii1.x > this.playerAscii2.x){
+            this.playerAscii1.lastHDir = "l"
+            this.playerAscii2.lastHDir = "r"
         }else {
-            this.player.lastHDir = "r"
-            this.player2.lastHDir = "l"
+            this.playerAscii1.lastHDir = "r"
+            this.playerAscii2.lastHDir = "l"
         }
     }
     handleGuiHp(){
         let hp1: string = "", hp2: string = ""
-        const difHp1 = this.player.hp > 100 ? Math.abs(this.player.hp - 100) : 0;
-        const difHp2 = this.player2.hp > 100 ? Math.abs(this.player2.hp - 100) : 0;
+        const difHp1 = this.playerAscii1.hp > 100 ? Math.abs(this.playerAscii1.hp - 100) : 0;
+        const difHp2 = this.playerAscii2.hp > 100 ? Math.abs(this.playerAscii2.hp - 100) : 0;
         // Player 1
-        for(let i = 0; i < (this.player.hp - difHp1)/10; i++){
+        for(let i = 0; i < (this.playerAscii1.hp - difHp1)/10; i++){
             hp1 = hp1 + "|"
         }
-        if(this.player.hp > 100){
+        if(this.playerAscii1.hp > 100){
             hp1 = hp1 + "\n"
-            for(let i = 0; i < (this.player.hp/10 - 10) % 21 ; i++){
+            for(let i = 0; i < (this.playerAscii1.hp/10 - 10) % 21 ; i++){
                 hp1 = hp1 + "|"
             }
         }
         // Player 2
-        for(let i = 0; i < (this.player2.hp - difHp2)/10; i++){
+        for(let i = 0; i < (this.playerAscii2.hp - difHp2)/10; i++){
             hp2 = hp2 + "|"
         }
-        if(this.player2.hp > 100){
+        if(this.playerAscii2.hp > 100){
             hp2 = hp2 + "\n"
-            for(let i = 0; i < (this.player2.hp/10 - 10) % 21 ; i++){
+            for(let i = 0; i < (this.playerAscii2.hp/10 - 10) % 21 ; i++){
                 hp2 = hp2 + "|"
             }
         }
-        this.playerHp.text = hp1
+        this.player1Hp.text = hp1
         this.player2Hp.text = hp2
     }
 }
