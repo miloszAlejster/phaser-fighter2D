@@ -4,9 +4,9 @@ import SceneKeys from "~/consts/sceneKeys";
 import * as Types from "~/types/index"
 import * as Colors from "~/consts/colors"
 
-export default class Game extends Phaser.Scene{
+export default class GameAscii extends Phaser.Scene{
     constructor(){
-        super('game');
+        super('game-ascii');
     }
     playerAscii1: PlayerAscii
     playerAscii2: PlayerAscii
@@ -16,18 +16,10 @@ export default class Game extends Phaser.Scene{
     player2Name: Phaser.GameObjects.Text
     overText: Phaser.GameObjects.Text
     settings: Types.gameSettings
-    player1Test: Phaser.GameObjects.Sprite
-    player2Test: Phaser.GameObjects.Sprite
     init(settings: Types.gameSettings){
         this.settings = settings
     }
     create(){
-        // sprite test
-        this.player1Test = this.add.sprite(50, 50, 'player_1').setDepth(1);
-        this.player2Test = this.add.sprite(100, 50, 'player_2').setDepth(1);
-        this.player2Test.flipX=true;
-        this.player1Test.play('idle-a1');
-        this.player2Test.play('idle-g2');
         // player1
         this.playerAscii1 = new PlayerAscii({
             scene: this,
