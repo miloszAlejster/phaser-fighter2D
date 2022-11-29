@@ -2,18 +2,15 @@ import Phaser from "phaser";
 import * as Types from "../../types/index"
 import * as Colors from "~/consts/colors"
 
-export default class Player extends Phaser.GameObjects.Sprite{
+export default class Player extends Phaser.Physics.Matter.Sprite{
     constructor(config, id: number, hp: number, immortal: boolean){
-        super(config.scene, config.x, config.y, config.texture);
-        this.scene.physics.world.enable(this)
-        this.scene.add.existing(this)
-        this.scene.physics.add.existing(this)
+        super(config.scene.matter.world, config.x, config.y, config.texture);
+		this.setTexture(config.texture)
+		config.scene.add.existing(this)
         this.id = id
         this.hp = hp
         this.immortal = immortal
-        if('setCollideWorldBounds' in this.body){
-            this.body.setCollideWorldBounds(true)
-        }
+        // TODO: make array of anims for player one and two
         if(id === 1){
             this.keys  = {
                 left: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A),
@@ -43,7 +40,7 @@ export default class Player extends Phaser.GameObjects.Sprite{
     hp: number
     dead: boolean = false
     enemy: Player
-    MovementSpeed: number = 150
+    MovementSpeed: number = 5
     keys: Types.keysTypes
     recordedKeys: Types.keyBool
     jumpCooldown: number = 0
@@ -70,11 +67,6 @@ export default class Player extends Phaser.GameObjects.Sprite{
     isBlockStart: boolean = false
     ratio: number = this.width / this.height
     update(){
-        this.displayWidth = Math.round(this.width * this.ratio);
-        this.displayHeight = Math.round(this.height * this.ratio);
-        if('setSize' in this.body){
-            this.body.setSize(this.displayWidth, this.displayHeight, true);
-        }
         if(this.dead === true) return
         this.recordKeys()
         this.handlePlayerMovement()
@@ -180,25 +172,22 @@ export default class Player extends Phaser.GameObjects.Sprite{
         
     }
     handlePlayerMovement(){
+        // TODO: change movement so player can fly, kinda
         // reset
-        if('setVelocity' in this.body){
-            this.body.setVelocity(0);
-        }
+        this.setVelocityX(0);
         if(this.isKnock === false){
             // handle movement horizontaly
             if (this.recordedKeys.left === true){
-                this.body.velocity.x = -this.MovementSpeed
-                // this.play();
+                this.setVelocityX(-this.MovementSpeed);
             } else if (this.recordedKeys.right === true){
-                this.body.velocity.x = this.MovementSpeed
+                this.setVelocityX(this.MovementSpeed);
             }
             // handle jump and crouch
             if (this.recordedKeys.crouch === true){
                 this.lastVDir = "d"
                 this.idle = false;
                 this.isCrouching = true
-            } else if (this.recordedKeys.jump === true 
-                && ('touching' in this.body) && this.body.blocked.down){
+            } else if (this.recordedKeys.jump === true){
                 this.lastVDir = "u"
                 this.jumpCooldown = 13
             }else{
@@ -209,7 +198,7 @@ export default class Player extends Phaser.GameObjects.Sprite{
         // handle jump in time
         if(this.jumpCooldown > 0){
             this.jumpCooldown -= 1
-            this.body.velocity.y = -400
+            this.setVelocityY(-4);
         }
     }
 }

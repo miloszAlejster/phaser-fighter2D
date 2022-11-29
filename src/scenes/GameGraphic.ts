@@ -20,12 +20,13 @@ export default class GameGraphic extends Phaser.Scene{
     player2Name: Phaser.GameObjects.Text;
     overText: Phaser.GameObjects.Text;
     create(){
+        this.matter.world.setGravity(0, 1);
         this.player1 = new Player(
             {
                 scene: this,
                 x: 100,
-                y: this.scale.height - 51.5,
-                textures: 'player_1'
+                y: this.scale.height - 71.5,
+                texture: 'player_1'
             },
             1, 
             this.settings.hp1, 
@@ -33,25 +34,21 @@ export default class GameGraphic extends Phaser.Scene{
         ).setOrigin(0.5);
         this.player2 = new Player(
             {
-            scene: this,
-            x: this.scale.width-100,
-            y: this.scale.height - 51.5,
-            textures: 'player_2'
+                scene: this,
+                x: this.scale.width - 100,
+                y: this.scale.height - 71.5,
+                texture: 'player_2'
             }, 
             2, 
             this.settings.hp2, 
             this.settings.immortality
         ).setOrigin(0.5);
-        this.player2.flipX=true;
-        this.player1.play('idle-a1');
-        this.player2.play('idle-g2');
+        this.player2.flipX = true;
         this.player1.enemy = this.player2;
         this.player2.enemy = this.player1;
         const worldWidth = this.scale.width;
         const worldHeigth = this.scale.height - 10;
-        this.physics.world.setBounds(0, 0, worldWidth, worldHeigth);
-        this.physics.world.setBoundsCollision();
-        this.physics.add.collider(this.player1, this.player2);
+        this.matter.world.setBounds(0, 0, worldWidth, worldHeigth);
         //GUI
         this.player1Name = this.add.text(80, 10, "Player 1").setOrigin(0.5).setColor(Colors.default.p1Color);
         this.player2Name = this.add.text(this.scale.width-80, 10, "Player 2").setOrigin(0.5).setColor(Colors.default.p2Color);
