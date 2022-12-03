@@ -10,8 +10,11 @@ export default class Player extends Phaser.Physics.Matter.Sprite{
         this.id = id
         this.hp = hp
         this.immortal = immortal
-        // TODO: make array of anims for player one and two
         if(id === 1){
+            this.shapes = {
+                shapesPlayer: this.scene.cache.json.get('player1_shapes'),
+                shapesPlayerFlip: this.scene.cache.json.get('player1_shapes_flip')
+            }
             this.keys  = {
                 left: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A),
                 right: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D),
@@ -23,6 +26,11 @@ export default class Player extends Phaser.Physics.Matter.Sprite{
             }
             this.lastHDir = "r"
         }else if(id === 2){
+            // TODO: change to player 2
+            this.shapes = {
+                shapesPlayer: this.scene.cache.json.get('player1_shapes'),
+                shapesPlayerFlip: this.scene.cache.json.get('player1_shapes_flip')
+            }
             this.keys  = {
                 left: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT),
                 right: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT),
@@ -44,7 +52,6 @@ export default class Player extends Phaser.Physics.Matter.Sprite{
     keys: Types.keysTypes
     recordedKeys: Types.keyBool
     jumpCooldown: number = 0
-    idle: boolean = true
     isCrouching: boolean = false
     lastHDir: string
     lastVDir: string = "f"
@@ -66,16 +73,30 @@ export default class Player extends Phaser.Physics.Matter.Sprite{
     isKickStart: boolean = false
     isBlockStart: boolean = false
     ratio: number = this.width / this.height
-    update(){
-        if(this.dead === true) return
-        this.recordKeys()
-        this.handlePlayerMovement()
-        this.handlePlayerSize()
-        this.handlePunchAttack()
-        this.handleKickAttack()
-        this.handlePlayerDeath()
-        this.handleKnockout()
-        this.handleBlock()
+    isAir: boolean = false
+    isFalling: boolean = false
+    animMove: Types.animMove = {
+        punchA: false,
+        punchG: false,
+        kickA: false,
+        kickG: false,
+        block: false,
+        knockback: false,
+        right: false,
+        left: false
+    }
+    isIdleAir: boolean = true;
+    isIdleGround: boolean = false;
+    shapes: Types.shapes
+    update(){        
+        if(this.dead === true) return;
+        this.setAngularVelocity(0);
+        this.recordKeys();
+        this.handlePlayerMovement();
+        this.handlePlayerDeath();
+        this.handleKnockout();
+        this.handleBlock();
+        this.handleAnimation();
     }
     handleBlock(){
         if(this.isKick === false && this.isPunch === false 
@@ -108,10 +129,8 @@ export default class Player extends Phaser.Physics.Matter.Sprite{
     }
     handlePlayerDeath(){
         if(this.hp <= 0){
-            this.destroy()
-            this.destroyPunch()
-            this.destroyKick()
-            this.dead = true
+            this.destroy();
+            this.dead = true;
         }
     }
     recordKeys(){
@@ -126,79 +145,110 @@ export default class Player extends Phaser.Physics.Matter.Sprite{
             block: this.keys.block.isDown
         };
     }
-    handleKickAttack(){
-        // init kick attack
-        if(this.recordedKeys.kick && this.isKick === false && this.isKickStart === false 
-            && this.isPunch == false && this.isKnock == false && this.isBlock == false){
-            this.createKick()
-            this.isKick = true;
-            this.isKickStart = true
-            this.scene.time.addEvent({delay:this.kickDuration, callback: this.destroyKick, callbackScope: this})
-            this.scene.time.addEvent({delay:this.kickCooldown, callback: this.setCooldownKick, callbackScope: this})
+    handleAnimation(){
+        // is every value false
+        const doIdle = Object.values(this.animMove).every(value => !value);
+        if(doIdle === true){
+            if(this.isAir === true){
+                this.isIdleAir = true;
+            } else if(this.isAir === false){
+                this.isIdleGround = true;
+            }
         }
-    }
-    handlePunchAttack(){
-        // init punch attack
-        if(this.recordedKeys.punch && this.isPunch === false && this.isPunchStart === false 
-            && this.isKick === false && this.isKnock == false && this.isBlock == false){
-            this.createPunch()
-            this.isPunch = true;
-            this.isPunchStart = true;
-            this.scene.time.addEvent({delay:this.punchDuration, callback: this.destroyPunch, callbackScope: this})
-            this.scene.time.addEvent({delay:this.punchCooldown, callback: this.setCooldownPunch, callbackScope: this})
+        // idle
+        if(this.isIdleAir === true){
+            this.isIdleGround = false;
+            // change shape
+            // TODO: fix it...
+            var sx = this.x;
+            var sy = this.y;
+            var sav = 0;
+            if('angularVelocity' in this.body) sav = this.body.angularVelocity;
+            var sv = this.body.velocity;
+            this.setBody(this.shapes.shapesPlayer['ide_air']);
+            this.setPosition(sx, sy);
+            this.setVelocity(sv.x, sv.y);
+            this.setAngularVelocity(sav);
+            //
+            this.play('idle_a1', true);
         }
+        if(this.isIdleGround === true){
+            this.isIdleAir = false;
+            this.play('idle_g1', true);
+        }
+        // movement
+        if(this.animMove.right === true){
+            if(this.lastHDir === 'r'){
+                this.play('walk_f1', true);
+            }else if(this.lastHDir === 'l'){
+                this.play('walk_b1', true);
+            }
+            this.setObjFalse(this.animMove);
+        }else if(this.animMove.left === true){
+            if(this.lastHDir === 'r'){
+                this.play('walk_b1', true);
+            }else if(this.lastHDir === 'l'){
+                this.play('walk_f1', true);
+            }
+            this.setObjFalse(this.animMove);
+        }
+        // punch
+        // TODO
     }
-    setCooldownKick(){
-        this.isKickStart = false;
-    }
-    destroyKick(){
-        
-        this.isKick = false;
-    }
-    setCooldownPunch(){
-        this.isPunchStart = false;
-    }
-    destroyPunch(){
-        
-        this.isPunch = false;
-    }
-    createKick(){
-        
-    }
-    createPunch(){
-        
-    }
-    handlePlayerSize(){
-        
+    setObjFalse(obj: Object): void{
+        Object.keys(obj).forEach(key => {
+            obj[key] = false;
+        });
     }
     handlePlayerMovement(){
-        // TODO: change movement so player can fly, kinda
         // reset
         this.setVelocityX(0);
+        this.setVelocityY(0);
         if(this.isKnock === false){
-            // handle movement horizontaly
+            // move front and back
             if (this.recordedKeys.left === true){
                 this.setVelocityX(-this.MovementSpeed);
+                this.animMove.left = true;
             } else if (this.recordedKeys.right === true){
                 this.setVelocityX(this.MovementSpeed);
+                this.animMove.right = true;
             }
-            // handle jump and crouch
-            if (this.recordedKeys.crouch === true){
-                this.lastVDir = "d"
-                this.idle = false;
-                this.isCrouching = true
-            } else if (this.recordedKeys.jump === true){
-                this.lastVDir = "u"
-                this.jumpCooldown = 13
-            }else{
-                this.idle = true;
-                this.isCrouching = false;
+            // get to the air
+            if(this.recordedKeys.jump === true && this.isAir === false){
+                this.isAir = true;
+                this.setVelocityY(-3);
+                this.scene.time.addEvent({delay:5000, callback: this.setFalling, callbackScope: this});
+            }
+            // fly up
+            if(this.recordedKeys.jump === true && this.isAir === true){
+                this.setVelocityY(-3);
+            }
+            // fly down
+            if(this.recordedKeys.crouch === true && this.isAir === true){
+                this.setVelocityY(3);
+            }
+            // crouch
+            if(this.recordedKeys.crouch === true && this.isAir === false){
+                this.isCrouching = true;
+                this.scene.time.addEvent({delay:500, callback: this.setCrouch, callbackScope: this});
             }
         }
-        // handle jump in time
-        if(this.jumpCooldown > 0){
-            this.jumpCooldown -= 1
-            this.setVelocityY(-4);
+        // handle falling
+        if(this.isFalling === true){
+            this.setVelocityY(6);
         }
+        // stop falling
+        if(this.y > 176){
+            this.isFalling = false;
+            this.isAir = false;
+            this.isIdleGround = true;
+            this.isIdleAir = false;
+        }
+    }
+    setFalling(){   
+        this.isFalling = true;
+    }
+    setCrouch(){   
+        this.isCrouching = false;
     }
 }
