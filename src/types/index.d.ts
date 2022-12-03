@@ -7,6 +7,20 @@ export interface keysTypes{
   kick: Phaser.Input.Keyboard.Key
   block: Phaser.Input.Keyboard.Key
 }
+export interface animMove{
+  punchA: boolean
+  punchG: boolean
+  kickA: boolean
+  kickG: boolean
+  block: boolean
+  knockback: boolean
+  right: boolean
+  left: boolean
+}
+export interface shapes{
+  shapesPlayer: Phaser.GameObjects.Shape
+  shapesPlayerFlip: Phaser.GameObjects.Shape
+}
 export interface gameSettings{
   hp1: number
   hp2: number
