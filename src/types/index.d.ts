@@ -8,10 +8,10 @@ export interface keysTypes{
   block: Phaser.Input.Keyboard.Key
 }
 export interface animMove{
-  punchA: boolean
-  punchG: boolean
-  kickA: boolean
-  kickG: boolean
+  idleA: boolean
+  idleG: boolean
+  punch: boolean
+  kick: boolean
   block: boolean
   knockback: boolean
   right: boolean

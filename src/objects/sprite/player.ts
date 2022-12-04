@@ -57,13 +57,13 @@ export default class Player extends Phaser.Physics.Matter.Sprite{
     lastVDir: string = "f"
     firstCrouch: boolean = true
     // cooldowns
-    crouchCooldown: number = 700
-    punchCooldown: number = 500
+    crouchCooldown: number = 800
+    punchCooldown: number = 400
     kickCooldown: number = 600
-    blockCooldown: number = 1000
+    blockCooldown: number = 800
     // durations
     crouchDuration: number = 200
-    punchDuration: number = 100
+    punchDuration: number = 250
     kickDuration: number = 200
     blockDuration: number = 100
     // colldown flags
@@ -79,10 +79,10 @@ export default class Player extends Phaser.Physics.Matter.Sprite{
     isAir: boolean = false
     isFalling: boolean = false
     animMove: Types.animMove = {
-        punchA: false,
-        punchG: false,
-        kickA: false,
-        kickG: false,
+        idleA: false,
+        idleG: false,
+        punch: false,
+        kick: false,
         block: false,
         knockback: false,
         right: false,
@@ -161,19 +161,19 @@ export default class Player extends Phaser.Physics.Matter.Sprite{
         const doIdle = Object.values(this.animMove).every(value => !value);
         if(doIdle === true){
             if(this.isAir === true){
-                this.isIdleAir = true;
+                this.animMove.idleA = true;
             } else if(this.isAir === false){
-                this.isIdleGround = true;
+                this.animMove.idleG = true;
             }
         }
         // idle
-        if(this.isIdleAir === true){
-            this.isIdleGround = false;
+        if(this.animMove.idleA === true){
+            this.setObjFalse(this.animMove);
             this.setShape('idle_air');
             this.play('idle_a1', true);
         }
-        if(this.isIdleGround === true){
-            this.isIdleAir = false;
+        if(this.animMove.idleG === true){
+            this.setObjFalse(this.animMove);
             this.setShape('idle_ground');
             this.play('idle_g1', true);
         }
@@ -204,8 +204,7 @@ export default class Player extends Phaser.Physics.Matter.Sprite{
             this.setObjFalse(this.animMove);
         }
         // punch
-        // TODO: fix => shows only one frame
-        if(this.isPunch === true){
+        if(this.animMove.punch === true){
             if(this.isAir === true){
                 this.setShape('punch_air');
                 this.play('punch_a1', true);
@@ -215,13 +214,11 @@ export default class Player extends Phaser.Physics.Matter.Sprite{
             }
         }
         // crouch
-        // TODO: fix => shows only one frame
         if(this.isCrouching === true){
             this.setShape('crouch');
             this.play('crouch_1', true);
         }
         // kick
-        // TODO: fix => shows only one frame
         if(this.isKick === true){
             if(this.isAir === true){
                 this.setShape('kick_air');
@@ -232,7 +229,7 @@ export default class Player extends Phaser.Physics.Matter.Sprite{
             }
         }
     }
-    // reset animations flags
+    // set properties of object to false
     setObjFalse(obj: Object): void{
         Object.keys(obj).forEach(key => {
             obj[key] = false;
@@ -276,7 +273,8 @@ export default class Player extends Phaser.Physics.Matter.Sprite{
             }
             // punch
             if(this.recordedKeys.punch === true && this.canPunch){
-                this.isPunch = true;
+                // this.isPunch = true;
+                this.animMove.punch = true;
                 this.canPunch = false;
                 this.scene.time.addEvent({delay:this.punchDuration, callback: this.setPunch, callbackScope: this});
                 this.scene.time.addEvent({delay:this.punchCooldown, callback: this.setCooldownPunch, callbackScope: this});
@@ -309,7 +307,8 @@ export default class Player extends Phaser.Physics.Matter.Sprite{
         this.isCrouching = false;
     }
     setPunch(){
-        this.isPunch = false;
+        // this.isPunch = false;
+        this.setObjFalse(this.animMove);
     }
     setKick(){
         this.isKick = false;
