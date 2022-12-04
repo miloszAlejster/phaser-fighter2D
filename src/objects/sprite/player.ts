@@ -64,11 +64,12 @@ export default class Player extends Phaser.Physics.Matter.Sprite{
     // durations
     crouchDuration: number = 200
     punchDuration: number = 100
-    kickDuration: number = 100
+    kickDuration: number = 200
     blockDuration: number = 100
     // colldown flags
     canPunch: boolean = true;
     canCrouch: boolean = true;
+    canKick: boolean = true;
     // action flags
     isPunch: boolean = false
     isKick: boolean = false
@@ -92,6 +93,8 @@ export default class Player extends Phaser.Physics.Matter.Sprite{
     shapes: Types.shapes
     currentShape: Phaser.GameObjects.Shape
     update(){        
+        //test
+        if(this.id === 1) console.log("air ", this.isAir, " punch ", this.isPunch);
         if(this.dead === true) return;
         this.setcurrentShape();
         this.setAngularVelocity(0);
@@ -176,22 +179,28 @@ export default class Player extends Phaser.Physics.Matter.Sprite{
         }
         // movement
         if(this.animMove.right === true){
+            // right front
             if(this.lastHDir === 'r'){
                 this.setShape('walk_front');
                 this.play('walk_f1', true);
+            // right back
             }else if(this.lastHDir === 'l'){
                 this.setShape('walk_back');
                 this.play('walk_b1', true);
             }
+            // reset
             this.setObjFalse(this.animMove);
         }else if(this.animMove.left === true){
+            // left back
             if(this.lastHDir === 'r'){
                 this.setShape('walk_back');
                 this.play('walk_b1', true);
+            // left front
             }else if(this.lastHDir === 'l'){
                 this.setShape('walk_front');
                 this.play('walk_f1', true);
             }
+            // reset
             this.setObjFalse(this.animMove);
         }
         // punch
@@ -211,7 +220,19 @@ export default class Player extends Phaser.Physics.Matter.Sprite{
             this.setShape('crouch');
             this.play('crouch_1', true);
         }
+        // kick
+        // TODO: fix => shows only one frame
+        if(this.isKick === true){
+            if(this.isAir === true){
+                this.setShape('kick_air');
+                this.play('kick_a1');
+            }else if(this.isAir === false){
+                this.setShape('kick_ground');
+                this.play('kick_g1');
+            }
+        }
     }
+    // reset animations flags
     setObjFalse(obj: Object): void{
         Object.keys(obj).forEach(key => {
             obj[key] = false;
@@ -248,6 +269,7 @@ export default class Player extends Phaser.Physics.Matter.Sprite{
             if(this.recordedKeys.crouch === true && this.isAir === false && this.canCrouch){
                 this.isCrouching = true;
                 this.canCrouch = false;
+                // set on the ground
                 this.y += 15;
                 this.scene.time.addEvent({delay:this.crouchDuration, callback: this.setCrouch, callbackScope: this});
                 this.scene.time.addEvent({delay:this.crouchCooldown, callback: this.setCooldownCrouch, callbackScope: this});
@@ -257,7 +279,14 @@ export default class Player extends Phaser.Physics.Matter.Sprite{
                 this.isPunch = true;
                 this.canPunch = false;
                 this.scene.time.addEvent({delay:this.punchDuration, callback: this.setPunch, callbackScope: this});
-                this.scene.time.addEvent({delay:this.punchCooldown, callback: this.setCooldownPunch, callbackScope: this})
+                this.scene.time.addEvent({delay:this.punchCooldown, callback: this.setCooldownPunch, callbackScope: this});
+            }
+            // kick
+            if(this.recordedKeys.kick === true && this.canKick === true){
+                this.isKick = true;
+                this.canKick = false;
+                this.scene.time.addEvent({delay:this.kickDuration, callback: this.setKick, callbackScope: this});
+                this.scene.time.addEvent({delay:this.kickCooldown, callback: this.setCooldownKick, callbackScope: this});    
             }
         }
         // handle falling
@@ -266,12 +295,13 @@ export default class Player extends Phaser.Physics.Matter.Sprite{
         }
         // stop falling
         if(this.y > 176){
+            this.isIdleGround = true;
             this.isFalling = false;
             this.isAir = false;
-            this.isIdleGround = true;
             this.isIdleAir = false;
         }
     }
+    // setting action flags
     setFalling(){   
         this.isFalling = true;
     }
@@ -281,10 +311,17 @@ export default class Player extends Phaser.Physics.Matter.Sprite{
     setPunch(){
         this.isPunch = false;
     }
+    setKick(){
+        this.isKick = false;
+    }
+    // setting actions cooldowns flags
     setCooldownPunch(){
         this.canPunch = true;
     }
     setCooldownCrouch(){
         this.canCrouch = true;
+    }
+    setCooldownKick(){
+        this.canKick = true;
     }
 }
