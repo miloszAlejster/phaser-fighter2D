@@ -43,7 +43,6 @@ export default class GameGraphic extends Phaser.Scene{
             this.settings.hp2, 
             this.settings.immortality
         ).setOrigin(0.5);
-        this.player2.flipX = true;
         this.player1.enemy = this.player2;
         this.player2.enemy = this.player1;
         const worldWidth = this.scale.width;
@@ -88,9 +87,13 @@ export default class GameGraphic extends Phaser.Scene{
     }
     handlePlayersDir(){
         if(this.player1.x > this.player2.x){
+            this.player1.flipX = true;
+            this.player2.flipX = false;
             this.player1.lastHDir = "l"
             this.player2.lastHDir = "r"
-        }else {
+        }else{
+            this.player1.flipX = false;
+            this.player2.flipX = true;
             this.player1.lastHDir = "r"
             this.player2.lastHDir = "l"
         }

@@ -85,12 +85,12 @@ export default class PreloaderScene extends Phaser.Scene{
             start: 1, end: 3, zeroPad: 4,
             prefix: 'punch/air/', suffix: '.png'
         });
-        this.anims.create({key: 'punch_a1', frames: frameNames, frameRate: 10, repeat: -1});
+        this.anims.create({key: 'punch_a1', frames: frameNames, frameRate: 1, repeat: -1});
                 
         frameNames = this.anims.generateFrameNames('player1', {
             start: 1, end: 3, zeroPad: 4,
             prefix: 'punch/ground/', suffix: '.png'
         });
-        this.anims.create({key: 'punch_g1', frames: frameNames, frameRate: 10, repeat: -1});
+        this.anims.create({key: 'punch_g1', frames: frameNames, frameRate: 1, repeat: -1});
     }
 }
