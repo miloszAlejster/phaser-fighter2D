@@ -49,9 +49,9 @@
 			}
 		]
 	},
-	"ide_air": {
+	"idle_air": {
 		"type": "fromPhysicsEditor",
-		"label": "ide_air",
+		"label": "idle_air",
 		"isStatic": false,
 		"density": 0.10000000149011612,
 		"restitution": 0,
@@ -74,9 +74,9 @@
 			}
 		]
 	},
-	"ide_ground": {
+	"idle_ground": {
 		"type": "fromPhysicsEditor",
-		"label": "ide_ground",
+		"label": "idle_ground",
 		"isStatic": false,
 		"density": 0.10000000149011612,
 		"restitution": 0,

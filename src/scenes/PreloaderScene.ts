@@ -55,7 +55,7 @@ export default class PreloaderScene extends Phaser.Scene{
             start: 1, end: 2, zeroPad: 4,
             prefix: 'crouch/', suffix: '.png'
         });
-        this.anims.create({key: 'crouch_1', frames: frameNames, frameRate: 10});
+        this.anims.create({key: 'crouch_1', frames: frameNames, frameRate: 2});
 
         frameNames = this.anims.generateFrameNames('player1', {
             start: 1, end: 1, zeroPad: 4,
@@ -67,7 +67,7 @@ export default class PreloaderScene extends Phaser.Scene{
             start: 1, end: 2, zeroPad: 4,
             prefix: 'kick/air/', suffix: '.png'
         });
-        this.anims.create({key: 'kick_a1', frames: frameNames, frameRate: 10, repeat: -1});
+        this.anims.create({key: 'kick_a1', frames: frameNames, frameRate: 15, repeat: -1});
         
         frameNames = this.anims.generateFrameNames('player1', {
             start: 1, end: 1, zeroPad: 4,
@@ -79,7 +79,7 @@ export default class PreloaderScene extends Phaser.Scene{
             start: 1, end: 3, zeroPad: 4,
             prefix: 'knockback/', suffix: '.png'
         });
-        this.anims.create({key: 'knockback_1', frames: frameNames, frameRate: 10});
+        this.anims.create({key: 'knockback_1', frames: frameNames, frameRate: 5});
         
         frameNames = this.anims.generateFrameNames('player1', {
             start: 1, end: 3, zeroPad: 4,

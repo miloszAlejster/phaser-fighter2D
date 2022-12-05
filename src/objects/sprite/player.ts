@@ -57,62 +57,61 @@ export default class Player extends Phaser.Physics.Matter.Sprite{
     lastVDir: string = "f"
     firstCrouch: boolean = true
     // cooldowns
-    punchCooldown: number = 500
+    crouchCooldown: number = 800
+    punchCooldown: number = 400
     kickCooldown: number = 600
-    blockCooldown: number = 1000
+    blockCooldown: number = 800
     // durations
-    punchDuration: number = 100
-    kickDuration: number = 100
+    crouchDuration: number = 200
+    punchDuration: number = 250
+    kickDuration: number = 200
     blockDuration: number = 100
+    // colldown flags
+    canPunch: boolean = true;
+    canCrouch: boolean = true;
+    canKick: boolean = true;
+    canBlock: boolean = true;
     // action flags
     isPunch: boolean = false
     isKick: boolean = false
     isBlock: boolean = false
     isKnock: boolean = false
-    isPunchStart: boolean = false
-    isKickStart: boolean = false
-    isBlockStart: boolean = false
     ratio: number = this.width / this.height
     isAir: boolean = false
     isFalling: boolean = false
     animMove: Types.animMove = {
-        punchA: false,
-        punchG: false,
-        kickA: false,
-        kickG: false,
+        idleA: false,
+        idleG: false,
+        punch: false,
+        kick: false,
         block: false,
         knockback: false,
         right: false,
-        left: false
+        left: false,
+        crouch: false
     }
     isIdleAir: boolean = true;
     isIdleGround: boolean = false;
     shapes: Types.shapes
+    currentShape: Phaser.GameObjects.Shape
     update(){        
+        // test
+        // if(this.id === 1) console.log("air ", this.isAir, " punch ", this.isPunch);
         if(this.dead === true) return;
+        this.setcurrentShape();
         this.setAngularVelocity(0);
         this.recordKeys();
         this.handlePlayerMovement();
         this.handlePlayerDeath();
         this.handleKnockout();
-        this.handleBlock();
         this.handleAnimation();
     }
-    handleBlock(){
-        if(this.isKick === false && this.isPunch === false 
-                && this.isBlockStart === false && this.isBlock === false 
-                && this.recordedKeys.block){
-            this.isBlock = true;
-            this.isBlockStart = true;
-            this.scene.time.addEvent({delay:this.blockCooldown, callback: this.setCooldownBlock, callbackScope: this})
-            this.scene.time.addEvent({delay:this.blockDuration, callback: this.setDurationBlock, callbackScope: this})
+    setcurrentShape(){
+        if(this.lastHDir === 'r'){
+            this.currentShape = this.shapes.shapesPlayer;
+        }else if(this.lastHDir === 'l'){
+            this.currentShape = this.shapes.shapesPlayerFlip;
         }
-    }
-    setCooldownBlock(){
-        this.isBlockStart = false;
-    }
-    setDurationBlock(){
-        this.isBlock = false;
     }
     handleKnockout(){
         if(this.isKnock && this.body){
@@ -145,56 +144,99 @@ export default class Player extends Phaser.Physics.Matter.Sprite{
             block: this.keys.block.isDown
         };
     }
+    setShape(shape: string){
+        // take params beforehead
+        var sx = this.x;
+        var sy = this.y;
+        var sav = 0;
+        if('angularVelocity' in this.body) sav = this.body.angularVelocity;
+        var sv = this.body.velocity;
+        // set shape
+        this.setBody(this.currentShape[shape]);
+        // pass previous params
+        this.setPosition(sx, sy);
+        this.setVelocity(sv.x, sv.y);
+        this.setAngularVelocity(sav);
+    }
     handleAnimation(){
         // is every value false
         const doIdle = Object.values(this.animMove).every(value => !value);
         if(doIdle === true){
             if(this.isAir === true){
-                this.isIdleAir = true;
+                this.animMove.idleA = true;
             } else if(this.isAir === false){
-                this.isIdleGround = true;
+                this.animMove.idleG = true;
             }
         }
         // idle
-        if(this.isIdleAir === true){
-            this.isIdleGround = false;
-            // change shape
-            // TODO: fix it...
-            var sx = this.x;
-            var sy = this.y;
-            var sav = 0;
-            if('angularVelocity' in this.body) sav = this.body.angularVelocity;
-            var sv = this.body.velocity;
-            this.setBody(this.shapes.shapesPlayer['ide_air']);
-            this.setPosition(sx, sy);
-            this.setVelocity(sv.x, sv.y);
-            this.setAngularVelocity(sav);
-            //
+        if(this.animMove.idleA === true){
+            this.setObjFalse(this.animMove);
+            this.setShape('idle_air');
             this.play('idle_a1', true);
         }
-        if(this.isIdleGround === true){
-            this.isIdleAir = false;
+        if(this.animMove.idleG === true){
+            this.setObjFalse(this.animMove);
+            this.setShape('idle_ground');
             this.play('idle_g1', true);
         }
         // movement
         if(this.animMove.right === true){
+            // right front
             if(this.lastHDir === 'r'){
+                this.setShape('walk_front');
                 this.play('walk_f1', true);
+            // right back
             }else if(this.lastHDir === 'l'){
+                this.setShape('walk_back');
                 this.play('walk_b1', true);
             }
+            // reset
             this.setObjFalse(this.animMove);
         }else if(this.animMove.left === true){
+            // left back
             if(this.lastHDir === 'r'){
+                this.setShape('walk_back');
                 this.play('walk_b1', true);
+            // left front
             }else if(this.lastHDir === 'l'){
+                this.setShape('walk_front');
                 this.play('walk_f1', true);
             }
+            // reset
             this.setObjFalse(this.animMove);
         }
         // punch
-        // TODO
+        if(this.animMove.punch === true){
+            if(this.isAir === true){
+                this.setShape('punch_air');
+                this.play('punch_a1', true);
+            }else if(this.isAir === false){
+                this.setShape('punch_ground');
+                this.play('punch_g1', true);
+            }
+        }
+        // crouch
+        if(this.animMove.crouch === true){
+            this.setShape('crouch');
+            this.play('crouch_1', true);
+        }
+        // kick
+        if(this.animMove.kick === true){
+            if(this.isAir === true){
+                this.setShape('kick_air');
+                this.play('kick_a1', true);
+            }else if(this.isAir === false){
+                this.setShape('kick_ground');
+                this.play('kick_g1', true);
+            }
+        }
+        // block
+        if(this.animMove.block === true){
+            this.setShape('block');
+            this.play('block_1');
+        }
     }
+    // set properties of object to false
     setObjFalse(obj: Object): void{
         Object.keys(obj).forEach(key => {
             obj[key] = false;
@@ -228,9 +270,34 @@ export default class Player extends Phaser.Physics.Matter.Sprite{
                 this.setVelocityY(3);
             }
             // crouch
-            if(this.recordedKeys.crouch === true && this.isAir === false){
-                this.isCrouching = true;
-                this.scene.time.addEvent({delay:500, callback: this.setCrouch, callbackScope: this});
+            if(this.recordedKeys.crouch === true && this.isAir === false && this.canCrouch){
+                this.animMove.crouch = true;
+                this.canCrouch = false;
+                // set on the ground
+                this.y += 15;
+                this.scene.time.addEvent({delay:this.crouchDuration, callback: this.setResetMove, callbackScope: this});
+                this.scene.time.addEvent({delay:this.crouchCooldown, callback: this.setCooldownCrouch, callbackScope: this});
+            }
+            // punch
+            if(this.recordedKeys.punch === true && this.canPunch === true){
+                this.animMove.punch = true;
+                this.canPunch = false;
+                this.scene.time.addEvent({delay:this.punchDuration, callback: this.setResetMove, callbackScope: this});
+                this.scene.time.addEvent({delay:this.punchCooldown, callback: this.setCooldownPunch, callbackScope: this});
+            }
+            // kick
+            if(this.recordedKeys.kick === true && this.canKick === true){
+                this.animMove.kick = true;
+                this.canKick = false;
+                this.scene.time.addEvent({delay:this.kickDuration, callback: this.setResetMove, callbackScope: this});
+                this.scene.time.addEvent({delay:this.kickCooldown, callback: this.setCooldownKick, callbackScope: this});    
+            }
+            // block
+            if(this.recordedKeys.block === true && this.canBlock === true){
+                this.animMove.block = true;
+                this.canBlock = false;
+                this.scene.time.addEvent({delay:this.kickDuration, callback: this.setResetMove, callbackScope: this});
+                this.scene.time.addEvent({delay:this.kickCooldown, callback: this.setCooldownBlock, callbackScope: this}); 
             }
         }
         // handle falling
@@ -239,16 +306,30 @@ export default class Player extends Phaser.Physics.Matter.Sprite{
         }
         // stop falling
         if(this.y > 176){
+            this.isIdleGround = true;
             this.isFalling = false;
             this.isAir = false;
-            this.isIdleGround = true;
             this.isIdleAir = false;
         }
+    }
+    // setting action flags
+    setResetMove(){
+        this.setObjFalse(this.animMove);
     }
     setFalling(){   
         this.isFalling = true;
     }
-    setCrouch(){   
-        this.isCrouching = false;
+    // setting actions cooldowns flags
+    setCooldownPunch(){
+        this.canPunch = true;
+    }
+    setCooldownCrouch(){
+        this.canCrouch = true;
+    }
+    setCooldownKick(){
+        this.canKick = true;
+    }
+    setCooldownBlock(){
+        this.canBlock = true;
     }
 }
