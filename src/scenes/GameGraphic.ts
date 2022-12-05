@@ -6,7 +6,13 @@ import * as Colors from "~/consts/colors";
 
 export default class GameGraphic extends Phaser.Scene{
     constructor(){
-        super("game-graphic");
+        super({ 
+            key: "game-graphic",
+            physics: {
+                default: 'matter',
+                matter: { gravity: { y: 9000 }, debug: true }
+            }
+        });
     }
     init(settings: Types.gameSettings){
         this.settings = settings

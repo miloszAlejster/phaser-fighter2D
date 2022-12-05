@@ -6,7 +6,13 @@ import * as Colors from "~/consts/colors"
 
 export default class GameAscii extends Phaser.Scene{
     constructor(){
-        super('game-ascii');
+        super({
+            key: 'game-ascii',
+            physics: {
+                default: "arcade",
+                arcade: { gravity: { y: 9000 } }
+            }
+        });
     }
     playerAscii1: PlayerAscii
     playerAscii2: PlayerAscii

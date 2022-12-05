@@ -6,7 +6,8 @@ export default class PreloaderScene extends Phaser.Scene{
     settings: Types.gameSettings = {
         hp1: 100,
         hp2: 100,
-        immortality: false
+        immortality: false,
+        graphic: false
     }
     constructor(){
         super('preloader');
@@ -17,7 +18,6 @@ export default class PreloaderScene extends Phaser.Scene{
         this.load.json('player1_shapes', 'shapes/player1_shapes.json');
         this.load.json('player1_shapes_flip', 'shapes/player1_shapes_flip.json');
         // player 2
-        // TODO
         this.load.on('complete', () => {
             this.scene.start(SceneKeys.MenuScene, this.settings);
         })

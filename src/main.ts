@@ -14,13 +14,6 @@ const config: Phaser.Types.Core.GameConfig = {
 	width: 381,
 	height: 213,
 	backgroundColor: 0x000000,
-	physics: { 
-		default: 'matter',
-		matter: {
-			gravity: { y: 9000 },
-			debug: true
-		}
-	},
 	zoom: 1.9
 }
 const game = new Phaser.Game(config);

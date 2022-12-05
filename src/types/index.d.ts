@@ -26,6 +26,7 @@ export interface gameSettings{
   hp1: number
   hp2: number
   immortality: boolean
+  graphic: boolean
 }
 export interface keyBool{
   left: boolean
