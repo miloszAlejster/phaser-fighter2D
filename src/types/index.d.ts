@@ -16,6 +16,7 @@ export interface animMove{
   knockback: boolean
   right: boolean
   left: boolean
+  crouch: boolean
 }
 export interface shapes{
   shapesPlayer: Phaser.GameObjects.Shape

@@ -70,6 +70,7 @@ export default class Player extends Phaser.Physics.Matter.Sprite{
     canPunch: boolean = true;
     canCrouch: boolean = true;
     canKick: boolean = true;
+    canBlock: boolean = true;
     // action flags
     isPunch: boolean = false
     isKick: boolean = false
@@ -86,15 +87,16 @@ export default class Player extends Phaser.Physics.Matter.Sprite{
         block: false,
         knockback: false,
         right: false,
-        left: false
+        left: false,
+        crouch: false
     }
     isIdleAir: boolean = true;
     isIdleGround: boolean = false;
     shapes: Types.shapes
     currentShape: Phaser.GameObjects.Shape
     update(){        
-        //test
-        if(this.id === 1) console.log("air ", this.isAir, " punch ", this.isPunch);
+        // test
+        // if(this.id === 1) console.log("air ", this.isAir, " punch ", this.isPunch);
         if(this.dead === true) return;
         this.setcurrentShape();
         this.setAngularVelocity(0);
@@ -214,19 +216,24 @@ export default class Player extends Phaser.Physics.Matter.Sprite{
             }
         }
         // crouch
-        if(this.isCrouching === true){
+        if(this.animMove.crouch === true){
             this.setShape('crouch');
             this.play('crouch_1', true);
         }
         // kick
-        if(this.isKick === true){
+        if(this.animMove.kick === true){
             if(this.isAir === true){
                 this.setShape('kick_air');
-                this.play('kick_a1');
+                this.play('kick_a1', true);
             }else if(this.isAir === false){
                 this.setShape('kick_ground');
-                this.play('kick_g1');
+                this.play('kick_g1', true);
             }
+        }
+        // block
+        if(this.animMove.block === true){
+            this.setShape('block');
+            this.play('block_1');
         }
     }
     // set properties of object to false
@@ -264,27 +271,33 @@ export default class Player extends Phaser.Physics.Matter.Sprite{
             }
             // crouch
             if(this.recordedKeys.crouch === true && this.isAir === false && this.canCrouch){
-                this.isCrouching = true;
+                this.animMove.crouch = true;
                 this.canCrouch = false;
                 // set on the ground
                 this.y += 15;
-                this.scene.time.addEvent({delay:this.crouchDuration, callback: this.setCrouch, callbackScope: this});
+                this.scene.time.addEvent({delay:this.crouchDuration, callback: this.setResetMove, callbackScope: this});
                 this.scene.time.addEvent({delay:this.crouchCooldown, callback: this.setCooldownCrouch, callbackScope: this});
             }
             // punch
-            if(this.recordedKeys.punch === true && this.canPunch){
-                // this.isPunch = true;
+            if(this.recordedKeys.punch === true && this.canPunch === true){
                 this.animMove.punch = true;
                 this.canPunch = false;
-                this.scene.time.addEvent({delay:this.punchDuration, callback: this.setPunch, callbackScope: this});
+                this.scene.time.addEvent({delay:this.punchDuration, callback: this.setResetMove, callbackScope: this});
                 this.scene.time.addEvent({delay:this.punchCooldown, callback: this.setCooldownPunch, callbackScope: this});
             }
             // kick
             if(this.recordedKeys.kick === true && this.canKick === true){
-                this.isKick = true;
+                this.animMove.kick = true;
                 this.canKick = false;
-                this.scene.time.addEvent({delay:this.kickDuration, callback: this.setKick, callbackScope: this});
+                this.scene.time.addEvent({delay:this.kickDuration, callback: this.setResetMove, callbackScope: this});
                 this.scene.time.addEvent({delay:this.kickCooldown, callback: this.setCooldownKick, callbackScope: this});    
+            }
+            // block
+            if(this.recordedKeys.block === true && this.canBlock === true){
+                this.animMove.block = true;
+                this.canBlock = false;
+                this.scene.time.addEvent({delay:this.kickDuration, callback: this.setResetMove, callbackScope: this});
+                this.scene.time.addEvent({delay:this.kickCooldown, callback: this.setCooldownBlock, callbackScope: this}); 
             }
         }
         // handle falling
@@ -300,18 +313,11 @@ export default class Player extends Phaser.Physics.Matter.Sprite{
         }
     }
     // setting action flags
-    setFalling(){   
-        this.isFalling = true;
-    }
-    setCrouch(){   
-        this.isCrouching = false;
-    }
-    setPunch(){
-        // this.isPunch = false;
+    setResetMove(){
         this.setObjFalse(this.animMove);
     }
-    setKick(){
-        this.isKick = false;
+    setFalling(){   
+        this.isFalling = true;
     }
     // setting actions cooldowns flags
     setCooldownPunch(){
@@ -322,5 +328,8 @@ export default class Player extends Phaser.Physics.Matter.Sprite{
     }
     setCooldownKick(){
         this.canKick = true;
+    }
+    setCooldownBlock(){
+        this.canBlock = true;
     }
 }
