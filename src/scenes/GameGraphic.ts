@@ -39,8 +39,6 @@ export default class GameGraphic extends Phaser.Scene{
             this.settings.hp1, 
             this.settings.immortality
         ).setOrigin(0.5);
-        if("label" in this.player1.body)
-            this.player1.body.label = 'player1';
         this.player2 = new Player(
             {
                 scene: this,
@@ -52,8 +50,6 @@ export default class GameGraphic extends Phaser.Scene{
             this.settings.hp2, 
             this.settings.immortality
         ).setOrigin(0.5);
-        if("label" in this.player2.body)
-            this.player2.body.label = 'player2';
         this.player1.enemy = this.player2;
         this.player2.enemy = this.player1;
         const worldWidth = this.scale.width;
@@ -111,16 +107,18 @@ export default class GameGraphic extends Phaser.Scene{
         this.scene.start(SceneKeys.TitleScreen);
     }
     handlePlayersDir(){
-        if(this.player1.x > this.player2.x){
-            this.player1.flipX = true;
-            this.player2.flipX = false;
-            this.player1.lastHDir = "l"
-            this.player2.lastHDir = "r"
-        }else{
-            this.player1.flipX = false;
-            this.player2.flipX = true;
-            this.player1.lastHDir = "r"
-            this.player2.lastHDir = "l"
+        if(this.player1.body && this.player2.body){
+            if(this.player1.x > this.player2.x){
+                this.player1.flipX = true;
+                this.player2.flipX = false;
+                this.player1.lastHDir = "l"
+                this.player2.lastHDir = "r"
+            }else{
+                this.player1.flipX = false;
+                this.player2.flipX = true;
+                this.player1.lastHDir = "r"
+                this.player2.lastHDir = "l"
+            }
         }
     }
     handleGuiHp(){

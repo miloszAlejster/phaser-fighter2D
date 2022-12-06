@@ -1,6 +1,5 @@
 import Phaser from "phaser";
 import * as Types from "../../types/index"
-import * as Colors from "~/consts/colors"
 
 export default class Player extends Phaser.Physics.Matter.Sprite{
     constructor(config, id: number, hp: number, immortal: boolean){
@@ -79,6 +78,10 @@ export default class Player extends Phaser.Physics.Matter.Sprite{
     ratio: number = this.width / this.height
     isAir: boolean = false
     isFalling: boolean = false
+    // attack flag
+    singlePunch: boolean = false;
+    singleKick: boolean = false;
+    singleBlock: boolean = false;
     animMove: Types.animMove = {
         idleA: false,
         idleG: false,
@@ -96,15 +99,33 @@ export default class Player extends Phaser.Physics.Matter.Sprite{
     currentShape: Phaser.GameObjects.Shape
     collides: boolean
     update(isCollision: boolean){
-        this.collides = isCollision;
         if(this.dead === true) return;
-        this.setcurrentShape();
-        this.setAngularVelocity(0);
         this.recordKeys();
         this.handlePlayerMovement();
-        this.handlePlayerDeath();
+        // get collide flag
+        this.collides = isCollision;
+        this.setcurrentShape();
+        // prevent tilting
+        this.setAngularVelocity(0);
+        // take key input
         this.handleKnockout();
         this.handleAnimation();
+        this.handleAttack();
+        this.handlePlayerDeath();
+    }
+    handleAttack(){
+        const damage = (this.immortal || this.enemy.animMove.block) ? 0 : 10;
+        if(this.collides === true){
+            if(this.animMove.punch === true && this.singlePunch === true){
+                this.enemy.hp -= damage;
+                this.singlePunch = false;
+            }
+            if(this.animMove.kick === true && this.enemy.isKnock === false && this.singleKick === true){
+                this.enemy.hp -= damage;
+                this.enemy.isKnock = true;
+                this.singleKick = false;
+            }
+        }
     }
     setcurrentShape(){
         if(this.lastHDir === 'r'){
@@ -116,9 +137,9 @@ export default class Player extends Phaser.Physics.Matter.Sprite{
     handleKnockout(){
         if(this.isKnock && this.body){
             if(this.lastHDir === "r"){
-                this.body.velocity.x -= 300;
+                this.setVelocityX(this.body.velocity.x - 10);
             }else if(this.lastHDir === "l"){
-                this.body.velocity.x += 300;
+                this.setVelocityX(this.body.velocity.x + 10);
             }
             this.scene.time.addEvent({delay:100, callback: this.destroyKnockout, callbackScope: this})
         }
@@ -282,6 +303,7 @@ export default class Player extends Phaser.Physics.Matter.Sprite{
             if(this.recordedKeys.punch === true && this.canPunch === true){
                 this.animMove.punch = true;
                 this.canPunch = false;
+                this.singlePunch = true;
                 this.scene.time.addEvent({delay:this.punchDuration, callback: this.setResetMove, callbackScope: this});
                 this.scene.time.addEvent({delay:this.punchCooldown, callback: this.setCooldownPunch, callbackScope: this});
             }
@@ -289,6 +311,7 @@ export default class Player extends Phaser.Physics.Matter.Sprite{
             if(this.recordedKeys.kick === true && this.canKick === true){
                 this.animMove.kick = true;
                 this.canKick = false;
+                this.singleKick = true;
                 this.scene.time.addEvent({delay:this.kickDuration, callback: this.setResetMove, callbackScope: this});
                 this.scene.time.addEvent({delay:this.kickCooldown, callback: this.setCooldownKick, callbackScope: this});    
             }
@@ -296,6 +319,7 @@ export default class Player extends Phaser.Physics.Matter.Sprite{
             if(this.recordedKeys.block === true && this.canBlock === true){
                 this.animMove.block = true;
                 this.canBlock = false;
+                this.singleBlock = true;
                 this.scene.time.addEvent({delay:this.kickDuration, callback: this.setResetMove, callbackScope: this});
                 this.scene.time.addEvent({delay:this.kickCooldown, callback: this.setCooldownBlock, callbackScope: this}); 
             }
