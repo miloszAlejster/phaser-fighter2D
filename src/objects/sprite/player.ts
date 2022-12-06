@@ -55,6 +55,9 @@ export default class Player extends Phaser.Physics.Matter.Sprite{
     lastHDir: string
     lastVDir: string = "f"
     firstCrouch: boolean = true
+    damage: integer = 10;
+    damageText: Phaser.GameObjects.Text
+    damageTextText: string
     // cooldowns
     crouchCooldown: number = 800
     punchCooldown: number = 400
@@ -113,16 +116,19 @@ export default class Player extends Phaser.Physics.Matter.Sprite{
         this.handlePlayerDeath();
     }
     handleAttack(){
-        const damage = (this.immortal || this.enemy.animMove.block) ? 0 : 10;
+        this.damage = (this.immortal || this.enemy.animMove.block) ? 0 : 10;
+        this.damageTextText = this.enemy.animMove.block ? "BLOCK" : this.damage.toString();
         if(this.collides === true){
             if(this.animMove.punch === true && this.singlePunch === true){
-                this.enemy.hp -= damage;
+                this.enemy.hp -= this.damage;
                 this.singlePunch = false;
+                this.showDamage();
             }
             if(this.animMove.kick === true && this.enemy.isKnock === false && this.singleKick === true){
-                this.enemy.hp -= damage;
+                this.enemy.hp -= this.damage;
                 this.enemy.isKnock = true;
                 this.singleKick = false;
+                this.showDamage();
             }
         }
     }
@@ -353,5 +359,17 @@ export default class Player extends Phaser.Physics.Matter.Sprite{
     }
     setCooldownBlock(){
         this.canBlock = true;
+    }
+    showDamage(){
+        const collisionObject = this.scene.matter.world.engine.pairs.list.slice(-1)[0].collision.supports[0];
+        const xTemp = collisionObject.x - this.width/2, yTemp = collisionObject.y - this.height/2, range: number = 5;
+        let x = Phaser.Math.Between(xTemp - range, xTemp + range)
+        let y = Phaser.Math.Between(yTemp - range, yTemp + range)
+        this.damageText = this.scene.add.text(x, y, this.damageTextText.toString(), {fontSize: '10px'})
+        this.scene.time.addEvent({delay:300, callback: this.handleTextDissapear, callbackScope: this} )
+    }
+    handleTextDissapear(){
+        this.damageText.destroy()
+        this.damageText.setVisible(false)
     }
 }
