@@ -6,7 +6,7 @@ import * as Colors from "~/consts/colors";
 
 export default class GameGraphic extends Phaser.Scene{
     constructor(){
-        super({ 
+        super({
             key: "game-graphic",
             physics: {
                 default: 'matter',
@@ -25,6 +25,7 @@ export default class GameGraphic extends Phaser.Scene{
     player1Name: Phaser.GameObjects.Text;
     player2Name: Phaser.GameObjects.Text;
     overText: Phaser.GameObjects.Text;
+    collides: boolean = false;
     create(){
         this.matter.world.setGravity(0, 1);
         this.player1 = new Player(
@@ -32,12 +33,14 @@ export default class GameGraphic extends Phaser.Scene{
                 scene: this,
                 x: 100,
                 y: 170,
-                texture: 'player1'
+                texture: 'player1',
             },
             1, 
             this.settings.hp1, 
             this.settings.immortality
         ).setOrigin(0.5);
+        if("label" in this.player1.body)
+            this.player1.body.label = 'player1';
         this.player2 = new Player(
             {
                 scene: this,
@@ -49,6 +52,8 @@ export default class GameGraphic extends Phaser.Scene{
             this.settings.hp2, 
             this.settings.immortality
         ).setOrigin(0.5);
+        if("label" in this.player2.body)
+            this.player2.body.label = 'player2';
         this.player1.enemy = this.player2;
         this.player2.enemy = this.player1;
         const worldWidth = this.scale.width;
@@ -64,13 +69,27 @@ export default class GameGraphic extends Phaser.Scene{
         this.input.keyboard.on('keydown-ESC', () => {
             this.handleChangeScene();
         })
+        // players collision detection
+        this.matter.world.on("collisionstart", event => {
+            event.pairs.forEach(pair => {
+                const { bodyA, bodyB } = pair;
+                const coll1 = bodyA.gameObject instanceof Player;
+                const coll2 = bodyB.gameObject instanceof Player;
+                if(coll1 && coll2){
+                    this.collides = true;
+                }
+            });
+        });
+        
     }
     update(time: number, delta: number): void {
-        this.player1.update();
-        this.player2.update();
+        this.player1.update(this.collides);
+        this.player2.update(this.collides);
         this.handleGuiHp();
         this.handlePlayersDir();
         this.handleOver()
+        // reset
+        this.collides = false;
     }
     handleOver(){
         const p1Death: boolean = this.player1.hp <= 0

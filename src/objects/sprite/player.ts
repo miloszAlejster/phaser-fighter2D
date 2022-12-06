@@ -94,9 +94,9 @@ export default class Player extends Phaser.Physics.Matter.Sprite{
     isIdleGround: boolean = false;
     shapes: Types.shapes
     currentShape: Phaser.GameObjects.Shape
-    update(){        
-        // test
-        // if(this.id === 1) console.log("air ", this.isAir, " punch ", this.isPunch);
+    collides: boolean
+    update(isCollision: boolean){
+        this.collides = isCollision;
         if(this.dead === true) return;
         this.setcurrentShape();
         this.setAngularVelocity(0);
