@@ -55,7 +55,6 @@ export default class Player extends Phaser.Physics.Matter.Sprite{
     lastHDir: string
     lastVDir: string = "f"
     firstCrouch: boolean = true
-    damage: integer = 10;
     damageText: Phaser.GameObjects.Text
     damageTextText: string
     // cooldowns
@@ -116,16 +115,16 @@ export default class Player extends Phaser.Physics.Matter.Sprite{
         this.handlePlayerDeath();
     }
     handleAttack(){
-        this.damage = (this.immortal || this.enemy.animMove.block) ? 0 : 10;
-        this.damageTextText = this.enemy.animMove.block ? "BLOCK" : this.damage.toString();
+        const damage = (this.immortal || this.enemy.animMove.block) ? 0 : 10;
+        this.damageTextText = this.enemy.animMove.block ? "BLOCK" : damage.toString();
         if(this.collides === true){
             if(this.animMove.punch === true && this.singlePunch === true){
-                this.enemy.hp -= this.damage;
+                this.enemy.hp -= damage;
                 this.singlePunch = false;
                 this.showDamage();
             }
             if(this.animMove.kick === true && this.enemy.isKnock === false && this.singleKick === true){
-                this.enemy.hp -= this.damage;
+                this.enemy.hp -= damage;
                 this.enemy.isKnock = true;
                 this.singleKick = false;
                 this.showDamage();
