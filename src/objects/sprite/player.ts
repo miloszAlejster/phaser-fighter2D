@@ -81,7 +81,6 @@ export default class Player extends Phaser.Physics.Matter.Sprite{
     // attack flag
     singlePunch: boolean = false;
     singleKick: boolean = false;
-    singleBlock: boolean = false;
     animMove: Types.animMove = {
         idleA: false,
         idleG: false,
@@ -319,7 +318,6 @@ export default class Player extends Phaser.Physics.Matter.Sprite{
             if(this.recordedKeys.block === true && this.canBlock === true){
                 this.animMove.block = true;
                 this.canBlock = false;
-                this.singleBlock = true;
                 this.scene.time.addEvent({delay:this.kickDuration, callback: this.setResetMove, callbackScope: this});
                 this.scene.time.addEvent({delay:this.kickCooldown, callback: this.setCooldownBlock, callbackScope: this}); 
             }
