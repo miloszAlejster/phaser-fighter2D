@@ -53,7 +53,7 @@ export default class Player extends Phaser.Physics.Matter.Sprite{
         }
         // event emitter
         this.on('animationcomplete', (anim) => {
-            if(anim.key === 'knockback_1' || anim.key === 'knockback_2'){
+            if(anim.key === this.animationNames.knockback){
                 this.animMove.knockback = false;
             }
             // this.scene.events.emit('animationcomplete_' + anim.key, anim);
