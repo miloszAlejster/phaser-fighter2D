@@ -154,7 +154,9 @@ export default class Player extends Phaser.Physics.Matter.Sprite{
             }
             if(this.animMove.kick === true && this.enemy.animMove.knockback === false && this.singleKick === true){
                 this.enemy.hp -= damage;
-                this.enemy.animMove.knockback = true;
+                if(this.enemy.animMove.block === false){
+                    this.enemy.animMove.knockback = true;
+                }
                 this.singleKick = false;
                 this.showDamage();
             }
