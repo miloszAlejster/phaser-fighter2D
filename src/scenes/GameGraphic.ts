@@ -26,12 +26,22 @@ export default class GameGraphic extends Phaser.Scene{
     player2Name: Phaser.GameObjects.Text;
     overText: Phaser.GameObjects.Text;
     collides: boolean = false;
+    camera: globalThis.Phaser.Cameras.Scene2D.Camera;
+    cameraX: number = 0;
+    mid: Phaser.Math.Vector2 = new Phaser.Math.Vector2();
+    FOLLOW_LERP_X = 0.05;
+    FOLLOW_LERP_Y = 0.05;
+    ZOOM_MIN = 0.8;
+    ZOOM_MAX = 1.2;
+    ZOOM_LERP = 0.05;
+    gameWidth: number = 922;
+    gameHeight: number = 213;
     create(){
         this.matter.world.setGravity(0, 1);
         this.player1 = new Player(
             {
                 scene: this,
-                x: 100,
+                x: (this.gameWidth/2) - 100,
                 y: 170,
                 texture: 'player1',
             },
@@ -42,7 +52,7 @@ export default class GameGraphic extends Phaser.Scene{
         this.player2 = new Player(
             {
                 scene: this,
-                x: this.scale.width - 100,
+                x: (this.gameWidth/2) + 100,
                 y: 170,
                 texture: 'player2'
             }, 
@@ -52,19 +62,7 @@ export default class GameGraphic extends Phaser.Scene{
         ).setOrigin(0.5);
         this.player1.enemy = this.player2;
         this.player2.enemy = this.player1;
-        const worldWidth = this.scale.width;
-        const worldHeigth = this.scale.height - 10;
-        this.matter.world.setBounds(0, 0, worldWidth, worldHeigth);
-        //GUI
-        this.player1Name = this.add.text(80, 10, "Player 1").setOrigin(0.5).setColor(Colors.default.p1Color);
-        this.player2Name = this.add.text(this.scale.width-80, 10, "Player 2").setOrigin(0.5).setColor(Colors.default.p2Color);
-        this.player1Hp = this.add.text(33, 20, "||||||||||");
-        this.player2Hp = this.add.text(253, 20, "||||||||||");
-        this.overText = this.add.text(this.scale.width/2, this.scale.height/2-20, "", {fontSize: '40px'}).setOrigin(0.5);
-        // end game
-        this.input.keyboard.on('keydown-ESC', () => {
-            this.handleChangeScene();
-        })
+        this.matter.world.setBounds(0, 0, this.gameWidth, this.gameHeight-5);
         // players collision detection
         this.matter.world.on("collisionstart", event => {
             event.pairs.forEach(pair => {
@@ -76,9 +74,25 @@ export default class GameGraphic extends Phaser.Scene{
                 }
             });
         });
-        
+        // background
+        this.add.image(0, 0, 'background').setOrigin(0).setDepth(-1);
+        // camera
+        this.camera = this.cameras.main;
+        this.camera.setBounds(0, 0, this.gameWidth, this.gameHeight);
+        this.camera.startFollow(this.mid, false, this.FOLLOW_LERP_X, this.FOLLOW_LERP_Y);
+        //GUI
+        this.player1Name = this.add.text(80, 10, "Player 1").setOrigin(0.5).setColor(Colors.default.p1Color).setScrollFactor(0).setScale(this.camera.zoom);
+        this.player2Name = this.add.text(301, 10, "Player 2").setOrigin(0.5).setColor(Colors.default.p2Color).setScrollFactor(0).setScale(this.camera.zoom);
+        this.player1Hp = this.add.text(33, 20, "||||||||||").setScrollFactor(0).setScale(this.camera.zoom);
+        this.player2Hp = this.add.text(253, 20, "||||||||||").setScrollFactor(0).setScale(this.camera.zoom);
+        this.overText = this.add.text(this.scale.width/2, this.scale.height/2-20, "", {fontSize: '40px'}).setOrigin(0.5).setScrollFactor(0).setScale(this.camera.zoom);
+        // end game
+        this.input.keyboard.on('keydown-ESC', () => {
+            this.handleChangeScene();
+        })
     }
     update(time: number, delta: number): void {
+        this.handleCamera();
         this.player1.update(this.collides);
         this.player2.update(this.collides);
         this.handleGuiHp();
@@ -87,20 +101,37 @@ export default class GameGraphic extends Phaser.Scene{
         // reset
         this.collides = false;
     }
+    handleCamera(){
+        if(this.player1.body && this.player2.body){
+            this.mid.copy(this.player1).lerp(this.player2, 0.5);
+            var dist = Phaser.Math.Distance.BetweenPoints(
+                this.player1.body.position,
+                this.player2.body.position
+            );
+            var min = Math.min(this.scale.width, this.scale.height) / 1.5;
+            this.camera.setZoom(
+                Phaser.Math.Linear(
+                    this.camera.zoom,
+                    Phaser.Math.Clamp(min / dist, this.ZOOM_MIN, this.ZOOM_MAX),
+                    this.ZOOM_LERP
+                )
+            );
+        }   
+    }
     handleOver(){
         const p1Death: boolean = this.player1.hp <= 0
         const p2Death: boolean = this.player2.hp <= 0;
         if(p1Death || p2Death){
             if(p1Death){
-                this.overText.setText("Player 2 WON")
+                this.overText.setText("Player 2 WON").setScrollFactor(0);
             }else if(p2Death){
-                this.overText.setText("Player 1 WON")
+                this.overText.setText("Player 1 WON").setScrollFactor(0);
             }
-            this.player1Name.destroy()
-            this.player2Name.destroy()
-            this.player1Hp.destroy()
-            this.player2Hp.destroy()
-            this.time.addEvent({delay:4000, callback: this.handleChangeScene, callbackScope: this} )
+            this.player1Name.destroy();
+            this.player2Name.destroy();
+            this.player1Hp.destroy();
+            this.player2Hp.destroy();
+            this.time.addEvent({delay:4000, callback: this.handleChangeScene, callbackScope: this});
         }
     }
     handleChangeScene(){

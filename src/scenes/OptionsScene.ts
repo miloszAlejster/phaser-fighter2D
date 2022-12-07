@@ -16,7 +16,7 @@ export default class OptionsScene extends Phaser.Scene{
     defaultImmortalityText: string
     // graphic
     graphic: Phaser.GameObjects.Text
-    defaultGraphic: boolean = false
+    defaultGraphic: boolean = true
     defaultGraphicText: string
     create(){
         // texts
