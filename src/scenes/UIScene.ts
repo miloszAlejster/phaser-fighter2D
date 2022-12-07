@@ -1,6 +1,50 @@
 import Phaser from "phaser";
 import SceneKeys from "~/consts/sceneKeys";
 
+class HealthBar {
+    bar: Phaser.GameObjects.Graphics;
+    x: number;
+    y: number;
+    value: number;
+    p: number;
+    constructor(scene, x, y, value){
+        this.bar = new Phaser.GameObjects.Graphics(scene);
+        this.x = x;
+        this.y = y;
+        this.value = value;
+        this.p = 76 / this.value;
+        this.draw();
+        scene.add.existing(this.bar);
+    }
+    decrease(amount){
+        this.value -= amount;
+        if (this.value < 0){
+            this.value = 0;
+        }
+        this.draw();
+        return (this.value === 0);
+    }
+    draw(){
+        this.bar.clear();
+        //  BG
+        this.bar.fillStyle(0x000000);
+        this.bar.fillRect(this.x, this.y, 80, 16);
+        //  Health
+        this.bar.fillStyle(0xffffff);
+        this.bar.fillRect(this.x + 2, this.y + 2, 76, 12);
+        if(this.value < 30){
+            this.bar.fillStyle(0xff0000);
+        }else{
+            this.bar.fillStyle(0x00ff00);
+        }
+        var d = Math.floor(this.p * this.value);
+        this.bar.fillRect(this.x + 2, this.y + 2, d, 12);
+    }
+    destroy(){
+        this.bar.clear();
+    }
+}
+
 export default class UIClass extends Phaser.Scene{
     constructor(){
         super(SceneKeys.UIScene);
@@ -11,23 +55,24 @@ export default class UIClass extends Phaser.Scene{
     player2Name: Phaser.GameObjects.Text;
     overText: Phaser.GameObjects.Text;
     game;
+    hp1: HealthBar;
+    hp2: HealthBar;
+    defhp1: number;
+    defhp2: number;
     create(){
         this.game = this.scene.get(SceneKeys.GameGraphic);
-        this.player1Name = this.add.text(80, 10, "Player 1").setOrigin(0.5).setScrollFactor(0);
-        this.player2Name = this.add.text(301, 10, "Player 2").setOrigin(0.5).setScrollFactor(0);
-        this.player1Hp = this.add.text(33, 20, "||||||||||").setScrollFactor(0);
-        this.player2Hp = this.add.text(253, 20, "||||||||||").setScrollFactor(0);
+        this.player1Name = this.add.text(381/4*1, 10, "Player 1").setOrigin(0.5).setScrollFactor(0);
+        this.player2Name = this.add.text(381/4*3, 10, "Player 2").setOrigin(0.5).setScrollFactor(0);
         this.overText = this.add.text(this.scale.width/2, this.scale.height/2-20, "", {fontSize: '40px'}).setOrigin(0.5).setScrollFactor(0);
         // end game
         this.input.keyboard.on('keydown-ESC', () => {
             this.handleChangeScene();
         })
+        this.hp1 = new HealthBar(this, 381/4*1-40, 20, this.game.settings.hp1);
+        this.hp2 = new HealthBar(this, 381/4*3-40, 20, this.game.settings.hp2);
     }
     update(){
         this.handleOver();
-        if(this.game.player1.hp != 0 && this.game.player2.hp != 0){
-            this.handleGuiHp();
-        }
     }
     handleOver(){
         const p1Death: boolean = this.game.player1.hp <= 0
@@ -38,10 +83,11 @@ export default class UIClass extends Phaser.Scene{
             }else if(p2Death){
                 this.overText.setText("Player 1 WON").setScrollFactor(0);
             }
+            // hide ui
             this.player1Name.destroy();
             this.player2Name.destroy();
-            this.player1Hp.destroy();
-            this.player2Hp.destroy();
+            this.hp1.destroy();
+            this.hp2.destroy();
             this.time.addEvent({delay:4000, callback: this.handleChangeScene, callbackScope: this});
         }
     }

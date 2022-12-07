@@ -150,6 +150,13 @@ export default class Player extends Phaser.Physics.Matter.Sprite{
             if(this.animMove.punch === true && this.singlePunch === true){
                 this.enemy.hp -= damage;
                 this.singlePunch = false;
+                if(this.id == 1){
+                    // @ts-ignore
+                    this.scene.Ui.hp2.decrease(damage);
+                }else if(this.id === 2){
+                    // @ts-ignore
+                    this.scene.Ui.hp1.decrease(damage);
+                }
                 this.showDamage();
             }
             if(this.animMove.kick === true && this.enemy.animMove.knockback === false && this.singleKick === true){
@@ -158,6 +165,13 @@ export default class Player extends Phaser.Physics.Matter.Sprite{
                     this.enemy.animMove.knockback = true;
                 }
                 this.singleKick = false;
+                if(this.id == 1){
+                    // @ts-ignore
+                    this.scene.Ui.hp2.decrease(damage);
+                }else if(this.id === 2){
+                    // @ts-ignore
+                    this.scene.Ui.hp1.decrease(damage);
+                }
                 this.showDamage();
             }
         }

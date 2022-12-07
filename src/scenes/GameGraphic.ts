@@ -76,7 +76,8 @@ export default class GameGraphic extends Phaser.Scene{
         this.camera.setBounds(0, 0, this.gameWidth, this.gameHeight);
         this.camera.startFollow(this.mid, false, this.FOLLOW_LERP_X, this.FOLLOW_LERP_Y);
         // UI
-        this.game.scene.add(SceneKeys.UIScene, UIScene, true, { x: 100, y: 100 });
+        // @ts-ignore
+        this.Ui = this.game.scene.add(SceneKeys.UIScene, UIScene, true, { x: 100, y: 100 });
     }
     update(time: number, delta: number): void {
         this.handleCamera();
