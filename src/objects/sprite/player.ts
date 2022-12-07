@@ -41,6 +41,13 @@ export default class Player extends Phaser.Physics.Matter.Sprite{
             }   
             this.lastHDir = "l"
         }
+        // event emitter
+        this.on('animationcomplete', (anim) => {
+            if(anim.key === 'knockback_1'){
+                this.animMove.knockback = false;
+            }
+            // this.scene.events.emit('animationcomplete_' + anim.key, anim);
+        }, this);
     }
     immortal: boolean
     id: number
@@ -76,7 +83,6 @@ export default class Player extends Phaser.Physics.Matter.Sprite{
     isPunch: boolean = false
     isKick: boolean = false
     isBlock: boolean = false
-    isKnock: boolean = false
     ratio: number = this.width / this.height
     isAir: boolean = false
     isFalling: boolean = false
@@ -123,9 +129,9 @@ export default class Player extends Phaser.Physics.Matter.Sprite{
                 this.singlePunch = false;
                 this.showDamage();
             }
-            if(this.animMove.kick === true && this.enemy.isKnock === false && this.singleKick === true){
+            if(this.animMove.kick === true && this.enemy.animMove.knockback === false && this.singleKick === true){
                 this.enemy.hp -= damage;
-                this.enemy.isKnock = true;
+                this.enemy.animMove.knockback = true;
                 this.singleKick = false;
                 this.showDamage();
             }
@@ -139,17 +145,16 @@ export default class Player extends Phaser.Physics.Matter.Sprite{
         }
     }
     handleKnockout(){
-        if(this.isKnock && this.body){
+        if(this.animMove.knockback === true && this.body){
             if(this.lastHDir === "r"){
-                this.setVelocityX(this.body.velocity.x - 10);
+                this.setVelocityX(this.body.velocity.x - 5);
             }else if(this.lastHDir === "l"){
-                this.setVelocityX(this.body.velocity.x + 10);
+                this.setVelocityX(this.body.velocity.x + 5);
             }
-            this.scene.time.addEvent({delay:100, callback: this.destroyKnockout, callbackScope: this})
         }
     }
     destroyKnockout(){
-        this.isKnock = false;
+        this.animMove.knockback = false;
     }
     handlePlayerDeath(){
         if(this.hp <= 0){
@@ -258,7 +263,12 @@ export default class Player extends Phaser.Physics.Matter.Sprite{
         // block
         if(this.animMove.block === true){
             this.setShape('block');
-            this.play('block_1');
+            this.play('block_1', true);
+        }
+        // knockback
+        if(this.animMove.knockback === true){
+            this.setShape('knockback');
+            this.play('knockback_1', true);
         }
     }
     // set properties of object to false
@@ -271,7 +281,7 @@ export default class Player extends Phaser.Physics.Matter.Sprite{
         // reset
         this.setVelocityX(0);
         this.setVelocityY(0);
-        if(this.isKnock === false){
+        if(this.animMove.knockback === false){
             // move front and back
             if (this.recordedKeys.left === true){
                 this.setVelocityX(-this.MovementSpeed);
