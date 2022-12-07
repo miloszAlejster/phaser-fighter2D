@@ -79,7 +79,7 @@ export default class PreloaderScene extends Phaser.Scene{
             start: 1, end: 3, zeroPad: 4,
             prefix: 'knockback/', suffix: '.png'
         });
-        this.anims.create({key: 'knockback_1', frames: frameNames, frameRate: 5});
+        this.anims.create({key: 'knockback_1', frames: frameNames, frameRate: 10});
         
         frameNames = this.anims.generateFrameNames('player1', {
             start: 1, end: 3, zeroPad: 4,
