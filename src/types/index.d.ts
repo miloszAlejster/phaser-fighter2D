@@ -18,6 +18,19 @@ export interface animMove{
   left: boolean
   crouch: boolean
 }
+export interface animations{
+  block: string
+  crouch: string
+  idlea: string
+  idleg: string
+  kicka: string
+  kickg: string
+  knockback: string
+  puncha: string
+  punchg: string
+  walkf: string
+  walkb: string
+}
 export interface shapes{
   shapesPlayer: Phaser.GameObjects.Shape
   shapesPlayerFlip: Phaser.GameObjects.Shape
