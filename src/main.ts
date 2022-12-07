@@ -11,8 +11,11 @@ import GameGraphic from './scenes/GameGraphic';
 
 const config: Phaser.Types.Core.GameConfig = {
 	type: Phaser.AUTO,
-	width: 381,
-	height: 213,
+	scale: {
+		mode: Phaser.Scale.NONE,
+		width: 381,
+		height: 213,
+	},
 	backgroundColor: 0x000000,
 	zoom: 1.9
 }

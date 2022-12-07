@@ -24,6 +24,8 @@ export default class PreloaderScene extends Phaser.Scene{
         this.load.on('complete', () => {
             this.scene.start(SceneKeys.MenuScene, this.settings);
         })
+        // background
+        this.load.image('background', 'other/background.png');
     }
     create(){
         this.initAnimPlayer_1();
