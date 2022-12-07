@@ -6,5 +6,16 @@ const TitleScreen = "title"
 const MenuScene = "menu"
 const OptionsScene = "options"
 const CreditsScene = "credits"
-const SceneKeys = {GameAscii, GameGraphic, PreloaderScene, BootScene, TitleScreen, MenuScene, OptionsScene, CreditsScene}
+const UIScene = "ui"
+const SceneKeys = {
+    GameAscii, 
+    GameGraphic, 
+    PreloaderScene, 
+    BootScene, 
+    TitleScreen, 
+    MenuScene, 
+    OptionsScene, 
+    CreditsScene, 
+    UIScene
+}
 export default SceneKeys

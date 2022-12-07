@@ -3,11 +3,12 @@ import SceneKeys from "~/consts/sceneKeys";
 import * as Types from "~/types/index";
 import Player from "~/objects/sprite/player"
 import * as Colors from "~/consts/colors";
+import UIScene from "./UIScene";
 
 export default class GameGraphic extends Phaser.Scene{
     constructor(){
         super({
-            key: "game-graphic",
+            key: SceneKeys.GameGraphic,
             physics: {
                 default: 'matter',
                 matter: { gravity: { y: 9000 }, debug: true }
@@ -81,11 +82,11 @@ export default class GameGraphic extends Phaser.Scene{
         this.camera.setBounds(0, 0, this.gameWidth, this.gameHeight);
         this.camera.startFollow(this.mid, false, this.FOLLOW_LERP_X, this.FOLLOW_LERP_Y);
         //GUI
-        this.player1Name = this.add.text(80, 10, "Player 1").setOrigin(0.5).setColor(Colors.default.p1Color).setScrollFactor(0).setScale(this.camera.zoom);
-        this.player2Name = this.add.text(301, 10, "Player 2").setOrigin(0.5).setColor(Colors.default.p2Color).setScrollFactor(0).setScale(this.camera.zoom);
-        this.player1Hp = this.add.text(33, 20, "||||||||||").setScrollFactor(0).setScale(this.camera.zoom);
-        this.player2Hp = this.add.text(253, 20, "||||||||||").setScrollFactor(0).setScale(this.camera.zoom);
-        this.overText = this.add.text(this.scale.width/2, this.scale.height/2-20, "", {fontSize: '40px'}).setOrigin(0.5).setScrollFactor(0).setScale(this.camera.zoom);
+        // this.player1Name = this.add.text(80, 10, "Player 1").setOrigin(0.5).setColor(Colors.default.p1Color).setScrollFactor(0);
+        // this.player2Name = this.add.text(301, 10, "Player 2").setOrigin(0.5).setColor(Colors.default.p2Color).setScrollFactor(0);
+        // this.player1Hp = this.add.text(33, 20, "||||||||||").setScrollFactor(0);
+        // this.player2Hp = this.add.text(253, 20, "||||||||||").setScrollFactor(0);
+        // this.overText = this.add.text(this.scale.width/2, this.scale.height/2-20, "", {fontSize: '40px'}).setOrigin(0.5).setScrollFactor(0);
         // end game
         this.input.keyboard.on('keydown-ESC', () => {
             this.handleChangeScene();
@@ -123,9 +124,9 @@ export default class GameGraphic extends Phaser.Scene{
         const p2Death: boolean = this.player2.hp <= 0;
         if(p1Death || p2Death){
             if(p1Death){
-                this.overText.setText("Player 2 WON").setScrollFactor(0);
+                //this.overText.setText("Player 2 WON").setScrollFactor(0);
             }else if(p2Death){
-                this.overText.setText("Player 1 WON").setScrollFactor(0);
+                //this.overText.setText("Player 1 WON").setScrollFactor(0);
             }
             this.player1Name.destroy();
             this.player2Name.destroy();
@@ -176,7 +177,7 @@ export default class GameGraphic extends Phaser.Scene{
                 hp2 = hp2 + "|"
             }
         }
-        this.player1Hp.text = hp1
-        this.player2Hp.text = hp2
+        //this.player1Hp.text = hp1
+        //this.player2Hp.text = hp2
     }
 }
