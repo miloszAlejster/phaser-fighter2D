@@ -370,12 +370,13 @@ export default class Player extends Phaser.Physics.Matter.Sprite{
         this.canBlock = true;
     }
     showDamage(){
+        // last collision point
         const collisionObject = this.scene.matter.world.engine.pairs.list.slice(-1)[0].collision.supports[0];
         const xTemp = collisionObject.x - this.width/2, yTemp = collisionObject.y - this.height/2, range: number = 5;
         let x = Phaser.Math.Between(xTemp - range, xTemp + range)
         let y = Phaser.Math.Between(yTemp - range, yTemp + range)
         this.damageText = this.scene.add.text(x, y, this.damageTextText.toString(), {fontSize: '10px'})
-        this.scene.time.addEvent({delay:300, callback: this.handleTextDissapear, callbackScope: this} )
+        this.scene.time.addEvent({delay:200, callback: this.handleTextDissapear, callbackScope: this} )
     }
     handleTextDissapear(){
         this.damageText.destroy()
