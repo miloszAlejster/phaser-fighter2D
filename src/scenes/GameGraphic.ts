@@ -2,7 +2,6 @@ import Phaser from "phaser";
 import SceneKeys from "~/consts/sceneKeys";
 import * as Types from "~/types/index";
 import Player from "~/objects/sprite/player"
-import * as Colors from "~/consts/colors";
 import UIScene from "./UIScene";
 
 export default class GameGraphic extends Phaser.Scene{
@@ -11,7 +10,7 @@ export default class GameGraphic extends Phaser.Scene{
             key: SceneKeys.GameGraphic,
             physics: {
                 default: 'matter',
-                matter: { gravity: { y: 9000 }, debug: true }
+                matter: { gravity: { y: 9000 }, debug: false }
             }
         });
     }
