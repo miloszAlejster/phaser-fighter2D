@@ -9,7 +9,17 @@ export default class Player extends Phaser.Physics.Matter.Sprite{
         this.id = id
         this.hp = hp
         this.immortal = immortal
+        // @ts-ignore
+        let tempAnims = this.anims.animationManager.anims.entries;
+        const getNmes = (id: number) => {
+            Object.keys(tempAnims).forEach((key) => {
+                if(key.slice(-1) == id.toString()){
+                    this.animationNames[key.slice(0, -2)] = key;
+                }
+            });
+        }
         if(id === 1){
+            getNmes(id);
             this.shapes = {
                 shapesPlayer: this.scene.cache.json.get('player1_shapes'),
                 shapesPlayerFlip: this.scene.cache.json.get('player1_shapes_flip')
@@ -25,10 +35,10 @@ export default class Player extends Phaser.Physics.Matter.Sprite{
             }
             this.lastHDir = "r"
         }else if(id === 2){
-            // TODO: change to player 2
+            getNmes(2);
             this.shapes = {
-                shapesPlayer: this.scene.cache.json.get('player1_shapes'),
-                shapesPlayerFlip: this.scene.cache.json.get('player1_shapes_flip')
+                shapesPlayer: this.scene.cache.json.get('player2_shapes'),
+                shapesPlayerFlip: this.scene.cache.json.get('player2_shapes_flip')
             }
             this.keys  = {
                 left: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT),
@@ -43,7 +53,7 @@ export default class Player extends Phaser.Physics.Matter.Sprite{
         }
         // event emitter
         this.on('animationcomplete', (anim) => {
-            if(anim.key === 'knockback_1'){
+            if(anim.key === this.animationNames.knockback){
                 this.animMove.knockback = false;
             }
             // this.scene.events.emit('animationcomplete_' + anim.key, anim);
@@ -100,6 +110,19 @@ export default class Player extends Phaser.Physics.Matter.Sprite{
         left: false,
         crouch: false
     }
+    animationNames: Types.animations = {
+        block: "",
+        crouch: "",
+        idlea: "",
+        idleg: "",
+        kicka: "",
+        kickg: "",
+        knockback: "",
+        puncha: "",
+        punchg: "",
+        walkf: "",
+        walkb: ""
+    }
     isIdleAir: boolean = true;
     isIdleGround: boolean = false;
     shapes: Types.shapes
@@ -131,7 +154,9 @@ export default class Player extends Phaser.Physics.Matter.Sprite{
             }
             if(this.animMove.kick === true && this.enemy.animMove.knockback === false && this.singleKick === true){
                 this.enemy.hp -= damage;
-                this.enemy.animMove.knockback = true;
+                if(this.enemy.animMove.block === false){
+                    this.enemy.animMove.knockback = true;
+                }
                 this.singleKick = false;
                 this.showDamage();
             }
@@ -202,23 +227,23 @@ export default class Player extends Phaser.Physics.Matter.Sprite{
         if(this.animMove.idleA === true){
             this.setObjFalse(this.animMove);
             this.setShape('idle_air');
-            this.play('idle_a1', true);
+            this.play(this.animationNames.idlea, true);
         }
         if(this.animMove.idleG === true){
             this.setObjFalse(this.animMove);
             this.setShape('idle_ground');
-            this.play('idle_g1', true);
+            this.play(this.animationNames.idleg, true);
         }
         // movement
         if(this.animMove.right === true){
             // right front
             if(this.lastHDir === 'r'){
                 this.setShape('walk_front');
-                this.play('walk_f1', true);
+                this.play(this.animationNames.walkf, true);
             // right back
             }else if(this.lastHDir === 'l'){
                 this.setShape('walk_back');
-                this.play('walk_b1', true);
+                this.play(this.animationNames.walkb, true);
             }
             // reset
             this.setObjFalse(this.animMove);
@@ -226,11 +251,11 @@ export default class Player extends Phaser.Physics.Matter.Sprite{
             // left back
             if(this.lastHDir === 'r'){
                 this.setShape('walk_back');
-                this.play('walk_b1', true);
+                this.play(this.animationNames.walkb, true);
             // left front
             }else if(this.lastHDir === 'l'){
                 this.setShape('walk_front');
-                this.play('walk_f1', true);
+                this.play(this.animationNames.walkf, true);
             }
             // reset
             this.setObjFalse(this.animMove);
@@ -239,36 +264,36 @@ export default class Player extends Phaser.Physics.Matter.Sprite{
         if(this.animMove.punch === true){
             if(this.isAir === true){
                 this.setShape('punch_air');
-                this.play('punch_a1', true);
+                this.play(this.animationNames.puncha, true);
             }else if(this.isAir === false){
                 this.setShape('punch_ground');
-                this.play('punch_g1', true);
+                this.play(this.animationNames.punchg, true);
             }
         }
         // crouch
         if(this.animMove.crouch === true){
             this.setShape('crouch');
-            this.play('crouch_1', true);
+            this.play(this.animationNames.crouch, true);
         }
         // kick
         if(this.animMove.kick === true){
             if(this.isAir === true){
                 this.setShape('kick_air');
-                this.play('kick_a1', true);
+                this.play(this.animationNames.kicka, true);
             }else if(this.isAir === false){
                 this.setShape('kick_ground');
-                this.play('kick_g1', true);
+                this.play(this.animationNames.kickg, true);
             }
         }
         // block
         if(this.animMove.block === true){
             this.setShape('block');
-            this.play('block_1', true);
+            this.play(this.animationNames.block, true);
         }
         // knockback
         if(this.animMove.knockback === true){
             this.setShape('knockback');
-            this.play('knockback_1', true);
+            this.play(this.animationNames.knockback, true);
         }
     }
     // set properties of object to false

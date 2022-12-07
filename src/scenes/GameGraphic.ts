@@ -44,7 +44,7 @@ export default class GameGraphic extends Phaser.Scene{
                 scene: this,
                 x: this.scale.width - 100,
                 y: 170,
-                texture: 'player1'
+                texture: 'player2'
             }, 
             2, 
             this.settings.hp2, 
