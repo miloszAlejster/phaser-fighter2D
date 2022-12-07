@@ -3,11 +3,12 @@ import SceneKeys from "~/consts/sceneKeys";
 import * as Types from "~/types/index";
 import Player from "~/objects/sprite/player"
 import * as Colors from "~/consts/colors";
+import UIScene from "./UIScene";
 
 export default class GameGraphic extends Phaser.Scene{
     constructor(){
         super({
-            key: "game-graphic",
+            key: SceneKeys.GameGraphic,
             physics: {
                 default: 'matter',
                 matter: { gravity: { y: 9000 }, debug: true }
@@ -20,11 +21,6 @@ export default class GameGraphic extends Phaser.Scene{
     player1: Player;
     player2: Player;
     settings: Types.gameSettings;
-    player1Hp: Phaser.GameObjects.Text;
-    player2Hp: Phaser.GameObjects.Text;
-    player1Name: Phaser.GameObjects.Text;
-    player2Name: Phaser.GameObjects.Text;
-    overText: Phaser.GameObjects.Text;
     collides: boolean = false;
     camera: globalThis.Phaser.Cameras.Scene2D.Camera;
     cameraX: number = 0;
@@ -80,24 +76,14 @@ export default class GameGraphic extends Phaser.Scene{
         this.camera = this.cameras.main;
         this.camera.setBounds(0, 0, this.gameWidth, this.gameHeight);
         this.camera.startFollow(this.mid, false, this.FOLLOW_LERP_X, this.FOLLOW_LERP_Y);
-        //GUI
-        this.player1Name = this.add.text(80, 10, "Player 1").setOrigin(0.5).setColor(Colors.default.p1Color).setScrollFactor(0).setScale(this.camera.zoom);
-        this.player2Name = this.add.text(301, 10, "Player 2").setOrigin(0.5).setColor(Colors.default.p2Color).setScrollFactor(0).setScale(this.camera.zoom);
-        this.player1Hp = this.add.text(33, 20, "||||||||||").setScrollFactor(0).setScale(this.camera.zoom);
-        this.player2Hp = this.add.text(253, 20, "||||||||||").setScrollFactor(0).setScale(this.camera.zoom);
-        this.overText = this.add.text(this.scale.width/2, this.scale.height/2-20, "", {fontSize: '40px'}).setOrigin(0.5).setScrollFactor(0).setScale(this.camera.zoom);
-        // end game
-        this.input.keyboard.on('keydown-ESC', () => {
-            this.handleChangeScene();
-        })
+        // UI
+        this.game.scene.add(SceneKeys.UIScene, UIScene, true, { x: 100, y: 100 });
     }
     update(time: number, delta: number): void {
         this.handleCamera();
         this.player1.update(this.collides);
         this.player2.update(this.collides);
-        this.handleGuiHp();
         this.handlePlayersDir();
-        this.handleOver()
         // reset
         this.collides = false;
     }
@@ -118,25 +104,6 @@ export default class GameGraphic extends Phaser.Scene{
             );
         }   
     }
-    handleOver(){
-        const p1Death: boolean = this.player1.hp <= 0
-        const p2Death: boolean = this.player2.hp <= 0;
-        if(p1Death || p2Death){
-            if(p1Death){
-                this.overText.setText("Player 2 WON").setScrollFactor(0);
-            }else if(p2Death){
-                this.overText.setText("Player 1 WON").setScrollFactor(0);
-            }
-            this.player1Name.destroy();
-            this.player2Name.destroy();
-            this.player1Hp.destroy();
-            this.player2Hp.destroy();
-            this.time.addEvent({delay:4000, callback: this.handleChangeScene, callbackScope: this});
-        }
-    }
-    handleChangeScene(){
-        this.scene.start(SceneKeys.TitleScreen);
-    }
     handlePlayersDir(){
         if(this.player1.body && this.player2.body){
             if(this.player1.x > this.player2.x){
@@ -151,32 +118,5 @@ export default class GameGraphic extends Phaser.Scene{
                 this.player2.lastHDir = "l"
             }
         }
-    }
-    handleGuiHp(){
-        let hp1: string = "", hp2: string = ""
-        const difHp1 = this.player1.hp > 100 ? Math.abs(this.player1.hp - 100) : 0;
-        const difHp2 = this.player2.hp > 100 ? Math.abs(this.player2.hp - 100) : 0;
-        // Player 1
-        for(let i = 0; i < (this.player1.hp - difHp1)/10; i++){
-            hp1 = hp1 + "|"
-        }
-        if(this.player1.hp > 100){
-            hp1 = hp1 + "\n"
-            for(let i = 0; i < (this.player1.hp/10 - 10) % 21 ; i++){
-                hp1 = hp1 + "|"
-            }
-        }
-        // Player 2
-        for(let i = 0; i < (this.player2.hp - difHp2)/10; i++){
-            hp2 = hp2 + "|"
-        }
-        if(this.player2.hp > 100){
-            hp2 = hp2 + "\n"
-            for(let i = 0; i < (this.player2.hp/10 - 10) % 21 ; i++){
-                hp2 = hp2 + "|"
-            }
-        }
-        this.player1Hp.text = hp1
-        this.player2Hp.text = hp2
     }
 }

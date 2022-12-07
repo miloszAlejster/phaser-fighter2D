@@ -21,12 +21,12 @@ const config: Phaser.Types.Core.GameConfig = {
 }
 const game = new Phaser.Game(config);
 
-game.scene.add(sceneKeys.GameAscii, GameAscii)
-game.scene.add(sceneKeys.GameGraphic, GameGraphic)
-game.scene.add(sceneKeys.BootScene, BootScene)
-game.scene.add(sceneKeys.PreloaderScene, PreloaderScene)
-game.scene.add(sceneKeys.TitleScreen, TitleScreen)
-game.scene.add(sceneKeys.MenuScene, MenuScene)
-game.scene.add(sceneKeys.OptionsScene, OptionsScene)
-game.scene.add(sceneKeys.CreditsScene, CreditsScene)
-game.scene.start(sceneKeys.BootScene)
+game.scene.add(sceneKeys.GameAscii, GameAscii);
+game.scene.add(sceneKeys.GameGraphic, GameGraphic);
+game.scene.add(sceneKeys.BootScene, BootScene);
+game.scene.add(sceneKeys.PreloaderScene, PreloaderScene);
+game.scene.add(sceneKeys.TitleScreen, TitleScreen);
+game.scene.add(sceneKeys.MenuScene, MenuScene);
+game.scene.add(sceneKeys.OptionsScene, OptionsScene);
+game.scene.add(sceneKeys.CreditsScene, CreditsScene);
+game.scene.start(sceneKeys.BootScene);
