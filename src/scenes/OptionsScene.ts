@@ -1,6 +1,6 @@
 import Phaser from "phaser";
-import SceneKeys from "~/consts/sceneKeys";
-import * as Types from "~/types/index"
+import SceneKeys from "../consts/sceneKeys";
+import * as Types from "../types/index"
 export default class OptionsScene extends Phaser.Scene{
     idVCursor: number = 0
     idHCursor: string = 'default'

@@ -1,5 +1,5 @@
 import Phaser from "phaser";
-import SceneKeys from "~/consts/sceneKeys";
+import SceneKeys from "../consts/sceneKeys";
 
 class HealthBar {
     bar: Phaser.GameObjects.Graphics;

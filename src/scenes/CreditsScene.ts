@@ -1,5 +1,5 @@
 import Phaser from "phaser";
-import SceneKeys from "~/consts/sceneKeys";
+import SceneKeys from "../consts/sceneKeys";
 export default class CreditsScene extends Phaser.Scene{
     creditText: Phaser.GameObjects.Text
     githubText: Phaser.GameObjects.Text

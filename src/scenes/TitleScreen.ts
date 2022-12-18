@@ -1,6 +1,6 @@
 import Phaser from "phaser";
-import SceneKeys from "~/consts/sceneKeys";
-import * as Types from "~/types/index"
+import SceneKeys from "../consts/sceneKeys";
+import * as Types from "../types/index"
 
 export default class TitleScreen extends Phaser.Scene{
     mainText: Phaser.GameObjects.Text

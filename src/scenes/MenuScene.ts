@@ -1,6 +1,6 @@
 import Phaser from "phaser";
-import SceneKeys from "~/consts/sceneKeys";
-import * as Types from "~/types/index"
+import SceneKeys from "../consts/sceneKeys";
+import * as Types from "../types/index"
 export default class MenuScene extends Phaser.Scene{
     playText: Phaser.GameObjects.Text
     optionsText: Phaser.GameObjects.Text

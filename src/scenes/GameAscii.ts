@@ -1,8 +1,8 @@
 import Phaser from "phaser";
-import PlayerAscii from "~/objects/ascii/player";
-import SceneKeys from "~/consts/sceneKeys";
-import * as Types from "~/types/index"
-import * as Colors from "~/consts/colors"
+import PlayerAscii from "../objects/ascii/player";
+import SceneKeys from "../consts/sceneKeys";
+import * as Types from "../types/index"
+import * as Colors from "../consts/colors"
 
 export default class GameAscii extends Phaser.Scene{
     constructor(){

@@ -3,7 +3,7 @@ import * as Types from "../../types/index"
 import * as SpritePlayer from "../../consts/spritesPlayer"
 import Punch from "./punch"
 import Kick from "./kick";
-import * as Colors from "~/consts/colors"
+import * as Colors from "../../consts/colors"
 
 export default class Player extends Phaser.GameObjects.Text{
     constructor(config, id: number, hp: number, immortal: boolean){
