@@ -14,9 +14,9 @@
 		"esModuleInterop": true,
 		"allowSyntheticDefaultImports": true,
 		"sourceMap": true,
-		"baseUrl": "./index.html",
+		"baseUrl": ".",
 		"paths": {
-		  "~/*": ["./*"]
+		  "consts/*": ["./src/consts/*", "./consts"]
 		},
 		"typeRoots": [
 			"node_modules/@types",
@@ -26,8 +26,5 @@
 			"phaser"
 		],
 		"strictPropertyInitialization": false
-	},
-	"include": [
-		"src/**/*"
-	]
+	}
 }
